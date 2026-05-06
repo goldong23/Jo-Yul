@@ -2,12 +2,14 @@
 
 | Student No | Name | E-Mail |
 | :--- | :--- | :--- |
-| (학번 입력) | (이름 입력) | (이메일 입력) |
+| 22411923 | 홍주은 | goldong23@yu.ac.kr |
 
 ## [ Revision history]
 | Revision date | Version # | Description | Author |
 | :--- | :--- | :--- | :--- |
-| 2026-03-27 | 1.00 | First draft (Jo:YUl) | (이름 입력) |
+| 2026-03-27 | 1.00 | First draft (Jo:YUl) | 홍주은 |
+| 2026-05-06 | 1.01 | 기능 추가 및 수정 (Jo:YUl) | 홍주은 |
+
 
 ## Contents
 1. Business purpose
@@ -34,7 +36,6 @@
 
 ## 2. System context diagram
 <img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/850f2cee-f48a-44fe-9203-3f4756693e85" />
-
 
 
 ## 3. Use case list
