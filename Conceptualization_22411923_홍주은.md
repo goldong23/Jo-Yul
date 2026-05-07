@@ -35,7 +35,8 @@
 결론적으로 "Jo:YUl"은 소모적인 연락과 알림 스트레스를 원천적으로 제거하여, 회원들이 단체 활동의 본질적인 목적에만 온전히 집중할 수 있는 스마트하고 효율적인 협업 환경을 제공할 것이다.
 
 ## 2. System context diagram
-<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/850f2cee-f48a-44fe-9203-3f4756693e85" />
+<img width="471" height="499" alt="image" src="https://github.com/user-attachments/assets/29b122c0-8bf7-44b9-8e11-716acb557d3a" />
+
 
 
 ## 3. Use case list
