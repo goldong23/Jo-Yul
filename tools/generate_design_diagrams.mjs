@@ -265,7 +265,20 @@ const sequenceFiles = [
 ];
 
 function renderSequence(title, participants, events) {
-  participants = participants.map(([, name]) => ["participant", name]);
+  const externalLifelines = new Set([
+    "member:Member",
+    "admin:Administrator",
+    "invitee:Member",
+    "sender:Member",
+    "recipient:Member",
+  ]);
+  participants = participants
+    .filter(([, name]) => !externalLifelines.has(name))
+    .map(([, name]) => ["participant", name]);
+  events = events.filter((event) => {
+    if (event[0] === "fragment") return true;
+    return !externalLifelines.has(event[0]) && !externalLifelines.has(event[1]);
+  });
   const laneW = 230;
   const marginX = 110;
   const top = 62;
