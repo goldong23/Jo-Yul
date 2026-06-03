@@ -4,7 +4,7 @@ import path from "node:path";
 const root = process.cwd();
 const outDir = path.join(root, "design_diagrams");
 fs.mkdirSync(outDir, { recursive: true });
-const diagramBg = "#f3f4f6";
+const diagramBg = "#ffffff";
 const nodeBg = "#fbfbfb";
 
 function esc(value = "") {
@@ -46,14 +46,9 @@ function markerDefs() {
 }
 
 function labelText(x, y, text, opts = {}) {
-  const { anchor = "middle", size = 12, weight = "400", max = 22, bg = true } = opts;
+  const { anchor = "middle", size = 12, weight = "400", max = 22 } = opts;
   const lines = wrap(text, max);
-  const longest = Math.max(...lines.map((line) => line.length), 1);
-  const width = Math.max(54, longest * size * 0.63 + 14);
-  const height = lines.length * (size + 3) + 5;
   let svg = "";
-  const bx = anchor === "middle" ? x - width / 2 : x - 3;
-  if (bg) svg += `<rect x="${bx}" y="${y - size - 4}" width="${width}" height="${height}" fill="${diagramBg}" opacity="0.96"/>`;
   lines.forEach((line, i) => {
     svg += `<text x="${x}" y="${y + i * (size + 3)}" text-anchor="${anchor}" font-family="Arial, sans-serif" font-size="${size}" font-weight="${weight}" fill="#111827">${esc(line)}</text>`;
   });
@@ -275,7 +270,7 @@ function renderSequence(title, participants, events) {
   const top = 62;
   const headH = 44;
   const xOf = new Map(participants.map(([, name], i) => [name, marginX + i * laneW]));
-  const heights = events.map((e) => e[0] === "fragment" ? 34 : 54 + Math.max(0, wrap(e[2] || "", 24).length - 1) * 13);
+  const heights = events.map((e) => e[0] === "fragment" ? 42 : 72 + Math.max(0, wrap(e[2] || "", 24).length - 1) * 14);
   const height = top + headH + 95 + heights.reduce((a, b) => a + b, 0);
   const width = marginX * 2 + (participants.length - 1) * laneW + 150;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
@@ -299,7 +294,7 @@ ${markerDefs()}
     }
     svg += `<line x1="${x}" y1="${lifeTop}" x2="${x}" y2="${lifeBottom}" stroke="#111827" stroke-width="1" stroke-dasharray="6 6"/>`;
   }
-  let y = lifeTop + 48;
+  let y = lifeTop + 56;
   let fragmentLayer = "";
   let messageLayer = "";
   const fragStack = [];
@@ -317,13 +312,13 @@ ${markerDefs()}
         const boxH = Math.max(70, y - topY + 8);
         fragmentLayer += `<rect x="${marginX - 36}" y="${topY}" width="${width - marginX - 52}" height="${boxH}" fill="none" stroke="#111827" stroke-dasharray="4 4"/>`;
         fragmentLayer += `<path d="M${marginX - 36} ${topY} h72 l-12 22 h-60 z" fill="${nodeBg}" stroke="#111827"/>`;
-        fragmentLayer += labelText(marginX - 2, current.y - 10, current.label, { size: 12, max: 18, weight: "700", bg: false });
+        fragmentLayer += labelText(marginX - 2, current.y - 10, current.label, { size: 12, max: 18, weight: "700" });
         for (const elseInfo of current.elseYs) {
           fragmentLayer += `<line x1="${marginX - 36}" y1="${elseInfo.y - 17}" x2="${width - 88}" y2="${elseInfo.y - 17}" stroke="#111827" stroke-dasharray="4 4"/>`;
-          fragmentLayer += labelText(marginX + 16, elseInfo.y - 23, elseInfo.label, { size: 12, max: 20, weight: "700", anchor: "start", bg: true });
+          fragmentLayer += labelText(marginX + 16, elseInfo.y - 26, elseInfo.label, { size: 12, max: 20, weight: "700", anchor: "start" });
         }
       }
-      y += 34;
+      y += 42;
       continue;
     }
     const [from, to, text, dashed = false] = e;
@@ -332,12 +327,12 @@ ${markerDefs()}
     const dash = dashed ? ' stroke-dasharray="5 4"' : "";
     if (x1 === x2) {
       messageLayer += `<path d="M${x1} ${y} h42 q18 0 18 18 q0 18 -18 18 h-42" fill="none" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"${dash}/>`;
-      messageLayer += labelText(x1 + 50, y - 6, text, { anchor: "start", size: 12, max: 30 });
+      messageLayer += labelText(x1 + 54, y - 18, text, { anchor: "start", size: 12, max: 30 });
     } else {
       messageLayer += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"${dash}/>`;
-      messageLayer += labelText((x1 + x2) / 2, y - 7, text, { size: 12, max: Math.max(16, Math.floor(Math.abs(x2 - x1) / 8)) });
+      messageLayer += labelText((x1 + x2) / 2, y - 18, text, { size: 12, max: Math.max(16, Math.floor(Math.abs(x2 - x1) / 8)) });
     }
-    y += 54 + Math.max(0, wrap(text, 24).length - 1) * 13;
+    y += 72 + Math.max(0, wrap(text, 24).length - 1) * 14;
   }
   return `${svg}${fragmentLayer}${messageLayer}</svg>`;
 }
@@ -387,10 +382,10 @@ ${markerDefs()}
       const mx = (x1 + x2) / 2 + bend;
       const my = (y1 + y2) / 2 - Math.abs(bend) * 0.2;
       svg += `<path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" fill="none" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/>`;
-      svg += labelText(mx, my - 4, label, { size: 11, max: 14 });
+      svg += labelText(mx, my - 18, label, { size: 11, max: 14 });
     } else {
       svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/>`;
-      svg += labelText((x1 + x2) / 2, (y1 + y2) / 2 - 4, label, { size: 11, max: 14 });
+      svg += labelText((x1 + x2) / 2, (y1 + y2) / 2 - 18, label, { size: 11, max: 14 });
     }
   }
   svg += `<circle cx="255" cy="95" r="10" fill="#111827"/>`;
