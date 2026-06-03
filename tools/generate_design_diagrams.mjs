@@ -4,6 +4,8 @@ import path from "node:path";
 const root = process.cwd();
 const outDir = path.join(root, "design_diagrams");
 fs.mkdirSync(outDir, { recursive: true });
+const diagramBg = "#f3f4f6";
+const nodeBg = "#fbfbfb";
 
 function esc(value = "") {
   return String(value)
@@ -38,7 +40,7 @@ function wrap(value, max = 18) {
 function markerDefs() {
   return `<defs>
   <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#111827"/></marker>
-  <marker id="hollowArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#fff" stroke="#111827"/></marker>
+  <marker id="hollowArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="${nodeBg}" stroke="#111827"/></marker>
   <marker id="diamond" viewBox="0 0 16 10" refX="1" refY="5" markerWidth="11" markerHeight="9" orient="auto"><path d="M1 5 L8 1 L15 5 L8 9 z" fill="#111827" stroke="#111827"/></marker>
 </defs>`;
 }
@@ -51,7 +53,7 @@ function labelText(x, y, text, opts = {}) {
   const height = lines.length * (size + 3) + 5;
   let svg = "";
   const bx = anchor === "middle" ? x - width / 2 : x - 3;
-  if (bg) svg += `<rect x="${bx}" y="${y - size - 4}" width="${width}" height="${height}" fill="#fff" opacity="0.94"/>`;
+  if (bg) svg += `<rect x="${bx}" y="${y - size - 4}" width="${width}" height="${height}" fill="${diagramBg}" opacity="0.96"/>`;
   lines.forEach((line, i) => {
     svg += `<text x="${x}" y="${y + i * (size + 3)}" text-anchor="${anchor}" font-family="Arial, sans-serif" font-size="${size}" font-weight="${weight}" fill="#111827">${esc(line)}</text>`;
   });
@@ -101,7 +103,7 @@ function renderClassDiagram() {
     const opH = Math.max(24, c.o.length * lineH + 12);
     const h = headerH + attrH + opH;
     nodes.set(c.n, { x: c.x, y: c.y, w: boxW, h });
-    boxes += `<rect x="${c.x}" y="${c.y}" width="${boxW}" height="${h}" fill="#fff" stroke="#111827" stroke-width="1.2"/>`;
+    boxes += `<rect x="${c.x}" y="${c.y}" width="${boxW}" height="${h}" fill="${nodeBg}" stroke="#111827" stroke-width="1.2"/>`;
     boxes += `<line x1="${c.x}" y1="${c.y + headerH}" x2="${c.x + boxW}" y2="${c.y + headerH}" stroke="#111827"/>`;
     boxes += `<line x1="${c.x}" y1="${c.y + headerH + attrH}" x2="${c.x + boxW}" y2="${c.y + headerH + attrH}" stroke="#111827"/>`;
     boxes += `<text x="${c.x + boxW / 2}" y="${c.y + 15}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#475569">&lt;&lt;${c.s}&gt;&gt;</text>`;
@@ -113,7 +115,7 @@ function renderClassDiagram() {
   const height = 1240;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
 ${markerDefs()}
-<rect width="100%" height="100%" fill="#ffffff"/>
+<rect width="100%" height="100%" fill="${diagramBg}"/>
 <text x="50" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700">Jo:YUl Class Diagram</text>`;
 
   function p(name, side = "right") {
@@ -278,21 +280,21 @@ function renderSequence(title, participants, events) {
   const width = marginX * 2 + (participants.length - 1) * laneW + 150;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
 ${markerDefs()}
-<rect width="100%" height="100%" fill="#ffffff"/>
+<rect width="100%" height="100%" fill="${diagramBg}"/>
 <text x="36" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="700">${esc(title)}</text>`;
   const lifeTop = top + headH;
   const lifeBottom = height - 40;
   for (const [kind, name] of participants) {
     const x = xOf.get(name);
     if (kind === "actor") {
-      svg += `<circle cx="${x}" cy="${top + 10}" r="10" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+      svg += `<circle cx="${x}" cy="${top + 10}" r="10" fill="${nodeBg}" stroke="#111827" stroke-width="1.3"/>
 <line x1="${x}" y1="${top + 20}" x2="${x}" y2="${top + 42}" stroke="#111827" stroke-width="1.3"/>
 <line x1="${x - 16}" y1="${top + 28}" x2="${x + 16}" y2="${top + 28}" stroke="#111827" stroke-width="1.3"/>
 <line x1="${x}" y1="${top + 42}" x2="${x - 16}" y2="${top + 58}" stroke="#111827" stroke-width="1.3"/>
 <line x1="${x}" y1="${top + 42}" x2="${x + 16}" y2="${top + 58}" stroke="#111827" stroke-width="1.3"/>
 <text x="${x}" y="${top + 78}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13">${esc(name)}</text>`;
     } else {
-      svg += `<rect x="${x - 84}" y="${top}" width="168" height="${headH}" fill="#fff" stroke="#111827" stroke-width="1.2"/>
+      svg += `<rect x="${x - 84}" y="${top}" width="168" height="${headH}" fill="${nodeBg}" stroke="#111827" stroke-width="1.2"/>
 <text x="${x}" y="${top + 27}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700">${esc(name)}</text>`;
     }
     svg += `<line x1="${x}" y1="${lifeTop}" x2="${x}" y2="${lifeBottom}" stroke="#111827" stroke-width="1" stroke-dasharray="6 6"/>`;
@@ -314,7 +316,7 @@ ${markerDefs()}
         const topY = current.y - 25;
         const boxH = Math.max(70, y - topY + 8);
         fragmentLayer += `<rect x="${marginX - 36}" y="${topY}" width="${width - marginX - 52}" height="${boxH}" fill="none" stroke="#111827" stroke-dasharray="4 4"/>`;
-        fragmentLayer += `<path d="M${marginX - 36} ${topY} h72 l-12 22 h-60 z" fill="#fff" stroke="#111827"/>`;
+        fragmentLayer += `<path d="M${marginX - 36} ${topY} h72 l-12 22 h-60 z" fill="${nodeBg}" stroke="#111827"/>`;
         fragmentLayer += labelText(marginX - 2, current.y - 10, current.label, { size: 12, max: 18, weight: "700", bg: false });
         for (const elseInfo of current.elseYs) {
           fragmentLayer += `<line x1="${marginX - 36}" y1="${elseInfo.y - 17}" x2="${width - 88}" y2="${elseInfo.y - 17}" stroke="#111827" stroke-dasharray="4 4"/>`;
@@ -345,7 +347,7 @@ function renderStateMachine() {
   const height = 1080;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
 ${markerDefs()}
-<rect width="100%" height="100%" fill="#ffffff"/>
+<rect width="100%" height="100%" fill="${diagramBg}"/>
 <text x="40" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700">Jo:YUl State Machine Diagram</text>`;
   const regions = [
     ["Authentication", 40, 70, 430, 360],
@@ -355,7 +357,7 @@ ${markerDefs()}
     ["Event / Workspace", 1000, 70, 480, 830],
   ];
   for (const [title, x, y, w, h] of regions) {
-    svg += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#fff" stroke="#111827" stroke-width="1.1"/>`;
+    svg += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${nodeBg}" stroke="#111827" stroke-width="1.1"/>`;
     svg += `<text x="${x + 12}" y="${y + 22}" font-family="Arial, sans-serif" font-size="14" font-weight="700">${esc(title)}</text>`;
   }
   const states = [
@@ -367,7 +369,7 @@ ${markerDefs()}
   ];
   const pos = new Map(states.map(([n, x, y]) => [n, { x, y }]));
   function state(name, x, y) {
-    svg += `<rect x="${x - 84}" y="${y - 24}" width="168" height="48" rx="18" fill="#fff" stroke="#111827" stroke-width="1.2"/>`;
+    svg += `<rect x="${x - 84}" y="${y - 24}" width="168" height="48" rx="18" fill="${nodeBg}" stroke="#111827" stroke-width="1.2"/>`;
     svg += `<text x="${x}" y="${y + 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700">${esc(name)}</text>`;
   }
   function edge(a, b, label, bend = 0) {
@@ -427,7 +429,7 @@ ${markerDefs()}
   edge("EventDeciding", "WorkspaceCreated", "[참여자 있음]");
   edge("WorkspaceCreated", "WorkspaceManaging", "입장");
   edge("WorkspaceManaging", "Home", "작업 종료", 110);
-  svg += `<circle cx="1240" cy="840" r="13" fill="#fff" stroke="#111827" stroke-width="1.4"/><circle cx="1240" cy="840" r="8" fill="#111827"/>`;
+  svg += `<circle cx="1240" cy="840" r="13" fill="${nodeBg}" stroke="#111827" stroke-width="1.4"/><circle cx="1240" cy="840" r="8" fill="#111827"/>`;
   edge("EventCanceled", { x: 1240, y: 840 }, "이벤트 취소");
   edge("Home", { x: 1240, y: 840 }, "로그아웃/종료", 70);
   states.forEach(([n, x, y]) => state(n, x, y));
