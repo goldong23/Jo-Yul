@@ -2,39 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const mdPath = path.join(root, "Design_22411923_홍주은.md");
 const outDir = path.join(root, "design_diagrams");
-
 fs.mkdirSync(outDir, { recursive: true });
-
-const md = fs.readFileSync(mdPath, "utf8");
-const mermaidBlocks = [...md.matchAll(/```mermaid\r?\n([\s\S]*?)\r?\n```/g)].map((m) => m[1]);
-if (mermaidBlocks.length < 16) {
-  throw new Error(`Expected at least 16 Mermaid blocks, found ${mermaidBlocks.length}`);
-}
-
-const sequenceNames = [
-  "03_01_register_member_sequence",
-  "03_02_login_sequence",
-  "03_03_create_team_sequence",
-  "03_04_invite_member_sequence",
-  "03_05_input_schedule_sequence",
-  "03_06_decide_schedule_sequence",
-  "03_07_upload_task_sequence",
-  "03_08_approve_task_sequence",
-  "03_09_manage_event_notification_sequence",
-  "03_10_vote_event_sequence",
-  "03_11_alert_vote_sequence",
-  "03_12_decide_event_sequence",
-  "03_13_create_team_workspace_sequence",
-  "03_14_manage_team_workspace_sequence",
-];
-
-const imageMap = [
-  ["02_class_diagram.svg", "Class Diagram"],
-  ...sequenceNames.map((name, index) => [`${name}.svg`, `Sequence Diagram ${index + 1}`]),
-  ["04_state_machine_diagram.svg", "State Machine Diagram"],
-];
 
 function esc(value = "") {
   return String(value)
@@ -44,311 +13,283 @@ function esc(value = "") {
     .replace(/"/g, "&quot;");
 }
 
-function textLines(value, max = 24) {
-  const result = [];
+function writeSvg(file, svg) {
+  fs.writeFileSync(path.join(outDir, file), svg, "utf8");
+}
+
+function lines(value, max = 24) {
+  const parts = String(value).split(/(\s+)/);
+  const out = [];
   let current = "";
-  for (const part of String(value).split(/(\s+)/)) {
-    const next = `${current}${part}`;
+  for (const part of parts) {
+    const next = current + part;
     if (next.length > max && current.trim()) {
-      result.push(current.trim());
+      out.push(current.trim());
       current = part.trimStart();
     } else {
       current = next;
     }
   }
-  if (current.trim()) result.push(current.trim());
-  return result.length ? result : [""];
+  if (current.trim()) out.push(current.trim());
+  return out.length ? out : [""];
 }
 
-function writeSvg(name, svg) {
-  fs.writeFileSync(path.join(outDir, name), svg, "utf8");
-}
-
-function parseClasses(block) {
-  const classes = [];
-  const classMap = new Map();
-  let current = null;
-  for (const raw of block.split(/\r?\n/)) {
-    const line = raw.trim();
-    const classMatch = line.match(/^class\s+([A-Za-z0-9_]+)\s*\{/);
-    if (classMatch) {
-      current = { name: classMatch[1], members: [] };
-      classes.push(current);
-      classMap.set(current.name, current);
-      continue;
-    }
-    if (current && line === "}") {
-      current = null;
-      continue;
-    }
-    if (current && line) {
-      current.members.push(line.replace(/^\+/, "+ "));
-    }
-  }
-  return classes;
-}
-
-function renderClassDiagram(block) {
-  const classes = parseClasses(block);
-  const groups = [
-    ["UI Layer", ["LoginUI", "RegisterUI", "HomeUI", "TeamUI", "ScheduleUI", "TaskBoardUI", "EventUI", "WorkspaceUI"]],
-    ["Service Layer", ["AuthService", "SupabaseAuthClient", "TeamService", "ScheduleService", "TaskService", "EventService", "WorkspaceService", "NotificationService"]],
-    ["Domain / External / Storage", ["Member", "Team", "TeamMember", "ScheduleBlock", "Task", "Submission", "Event", "Vote", "TeamWorkspace", "DataStore", "FileStorage", "SupabaseAuthAPI"]],
-  ];
-  const byName = new Map(classes.map((c) => [c.name, c]));
-  const boxW = 250;
-  const gapX = 32;
-  const gapY = 34;
-  const headerH = 28;
+function classBox({ x, y, w = 230, name, stereo = "", attrs = [], ops = [] }) {
   const lineH = 17;
-  let y = 36;
-  const nodes = [];
-
-  for (const [group, names] of groups) {
-    const available = names.filter((name) => byName.has(name));
-    const cols = group.startsWith("Domain") ? 4 : 4;
-    nodes.push({ kind: "group", title: group, x: 30, y, w: cols * boxW + (cols - 1) * gapX, h: 28 });
-    y += 44;
-    let rowMax = 0;
-    available.forEach((name, index) => {
-      const c = byName.get(name);
-      const row = Math.floor(index / cols);
-      const col = index % cols;
-      const x = 30 + col * (boxW + gapX);
-      const boxY = y + row * (rowMax + gapY);
-      const h = headerH + Math.max(1, c.members.length) * lineH + 18;
-      nodes.push({ kind: "class", ...c, x, y: boxY, w: boxW, h });
-      rowMax = Math.max(rowMax, h);
-    });
-    const rows = Math.ceil(available.length / cols);
-    y += rows * (rowMax + gapY) + 18;
-  }
-
-  const height = y + 40;
-  const width = 30 + 4 * boxW + 3 * gapX + 30;
-  const pos = new Map(nodes.filter((n) => n.kind === "class").map((n) => [n.name, n]));
-  const relations = [
-    ["LoginUI", "AuthService"], ["RegisterUI", "AuthService"], ["AuthService", "SupabaseAuthClient"],
-    ["SupabaseAuthClient", "SupabaseAuthAPI"], ["AuthService", "Member"], ["AuthService", "DataStore"],
-    ["HomeUI", "TeamUI"], ["TeamUI", "TeamService"], ["TeamService", "Team"], ["TeamService", "TeamMember"],
-    ["ScheduleUI", "ScheduleService"], ["ScheduleService", "ScheduleBlock"], ["TaskBoardUI", "TaskService"],
-    ["TaskService", "Task"], ["TaskService", "Submission"], ["TaskService", "FileStorage"],
-    ["EventUI", "EventService"], ["EventService", "Event"], ["EventService", "Vote"],
-    ["WorkspaceUI", "WorkspaceService"], ["WorkspaceService", "TeamWorkspace"],
-    ["NotificationService", "Member"], ["NotificationService", "Team"], ["NotificationService", "Event"],
-  ].filter(([a, b]) => pos.has(a) && pos.has(b));
-
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-<defs>
-  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-    <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
-  </marker>
-</defs>
-<rect width="100%" height="100%" fill="#ffffff"/>
-<text x="30" y="28" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937">Jo:YUl Class Diagram</text>`;
-
-  for (const [a, b] of relations) {
-    const from = pos.get(a);
-    const to = pos.get(b);
-    const x1 = from.x + from.w / 2;
-    const y1 = from.y + from.h;
-    const x2 = to.x + to.w / 2;
-    const y2 = to.y;
-    svg += `<path d="M${x1} ${y1} C${x1} ${y1 + 28}, ${x2} ${y2 - 28}, ${x2} ${y2}" fill="none" stroke="#8b8b8b" stroke-width="1.2" marker-end="url(#arrow)" opacity="0.65"/>`;
-  }
-
-  for (const node of nodes) {
-    if (node.kind === "group") {
-      svg += `<text x="${node.x}" y="${node.y}" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#2563eb">${esc(node.title)}</text>`;
-      continue;
-    }
-    svg += `<rect x="${node.x}" y="${node.y}" width="${node.w}" height="${node.h}" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.2"/>`;
-    svg += `<rect x="${node.x}" y="${node.y}" width="${node.w}" height="${headerH}" rx="6" fill="#e0f2fe" stroke="#64748b" stroke-width="1.2"/>`;
-    svg += `<text x="${node.x + node.w / 2}" y="${node.y + 20}" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#111827">${esc(node.name)}</text>`;
-    svg += `<line x1="${node.x}" y1="${node.y + headerH}" x2="${node.x + node.w}" y2="${node.y + headerH}" stroke="#64748b" stroke-width="1"/>`;
-    node.members.forEach((member, i) => {
-      svg += `<text x="${node.x + 10}" y="${node.y + headerH + 18 + i * lineH}" font-family="Consolas, monospace" font-size="11.5" fill="#334155">${esc(member)}</text>`;
-    });
-  }
-  return `${svg}</svg>`;
+  const headerH = 42;
+  const attrH = Math.max(24, attrs.length * lineH + 12);
+  const opH = Math.max(24, ops.length * lineH + 12);
+  const h = headerH + attrH + opH;
+  let svg = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="0" fill="#fff" stroke="#111827" stroke-width="1.2"/>`;
+  svg += `<line x1="${x}" y1="${y + headerH}" x2="${x + w}" y2="${y + headerH}" stroke="#111827" stroke-width="1"/>`;
+  svg += `<line x1="${x}" y1="${y + headerH + attrH}" x2="${x + w}" y2="${y + headerH + attrH}" stroke="#111827" stroke-width="1"/>`;
+  if (stereo) svg += `<text x="${x + w / 2}" y="${y + 15}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#475569">&lt;&lt;${esc(stereo)}&gt;&gt;</text>`;
+  svg += `<text x="${x + w / 2}" y="${y + (stereo ? 32 : 25)}" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#111827">${esc(name)}</text>`;
+  attrs.forEach((attr, i) => {
+    svg += `<text x="${x + 10}" y="${y + headerH + 17 + i * lineH}" font-family="Consolas, monospace" font-size="11" fill="#111827">${esc(attr)}</text>`;
+  });
+  ops.forEach((op, i) => {
+    svg += `<text x="${x + 10}" y="${y + headerH + attrH + 17 + i * lineH}" font-family="Consolas, monospace" font-size="11" fill="#111827">${esc(op)}</text>`;
+  });
+  return { svg, h };
 }
 
-function parseSequence(block) {
-  const lines = block.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-  const participants = [];
-  const seen = new Set();
-  const events = [];
-  for (const line of lines) {
-    let m = line.match(/^(actor|participant)\s+([A-Za-z0-9_]+)/);
-    if (m) {
-      if (!seen.has(m[2])) {
-        seen.add(m[2]);
-        participants.push({ kind: m[1], name: m[2] });
-      }
-      continue;
-    }
-    m = line.match(/^([A-Za-z0-9_]+)\s*(-{1,2}>>|->>|-->>)\s*([A-Za-z0-9_]+)\s*:\s*(.+)$/);
-    if (m) {
-      events.push({ type: "message", from: m[1], arrow: m[2], to: m[3], label: m[4] });
-      continue;
-    }
-    m = line.match(/^alt\s+(.+)$/);
-    if (m) events.push({ type: "fragmentStart", label: `alt ${m[1]}` });
-    m = line.match(/^else\s+(.+)$/);
-    if (m) events.push({ type: "fragmentElse", label: `else ${m[1]}` });
-    if (line === "end") events.push({ type: "fragmentEnd" });
-  }
-  return { participants, events };
-}
+function renderClassDiagram() {
+  const classes = [
+    { name: "LoginUI", stereo: "boundary", x: 40, y: 70, attrs: [], ops: ["+requestLogin()", "+showError()"] },
+    { name: "RegisterUI", stereo: "boundary", x: 40, y: 210, attrs: [], ops: ["+submitRegister()", "+showSuccess()", "+showError()"] },
+    { name: "HomeUI", stereo: "boundary", x: 40, y: 370, attrs: [], ops: ["+showHome()", "+updateTeamList()"] },
+    { name: "ScheduleUI", stereo: "boundary", x: 40, y: 510, attrs: [], ops: ["+selectUnavailableTime()", "+requestRecommendation()", "+confirmSchedule()"] },
+    { name: "TaskBoardUI", stereo: "boundary", x: 40, y: 690, attrs: [], ops: ["+requestUpload()", "+requestApproval()", "+requestRejection()"] },
+    { name: "EventUI", stereo: "boundary", x: 40, y: 870, attrs: [], ops: ["+submitVote()", "+requestDecision()"] },
+    { name: "WorkspaceUI", stereo: "boundary", x: 40, y: 1030, attrs: [], ops: ["+submitMessage()", "+updateMessageList()"] },
 
-function renderSequenceDiagram(block, title) {
-  const { participants, events } = parseSequence(block);
-  const laneW = 185;
-  const marginX = 48;
-  const top = 52;
-  const headY = 60;
-  const headH = 42;
-  const stepY = 46;
-  const width = marginX * 2 + Math.max(1, participants.length - 1) * laneW + 120;
-  const height = top + headH + events.length * stepY + 110;
-  const xOf = new Map(participants.map((p, i) => [p.name, marginX + i * laneW]));
-  const lifelineTop = headY + headH;
-  const lifelineBottom = height - 48;
+    { name: "AuthService", stereo: "control", x: 370, y: 100, attrs: [], ops: ["+registerMember()", "+login()", "+validateInput()", "+createMemberProfile()"] },
+    { name: "TeamService", stereo: "control", x: 370, y: 285, attrs: [], ops: ["+createTeam()", "+inviteMember()"] },
+    { name: "ScheduleService", stereo: "control", x: 370, y: 455, attrs: [], ops: ["+saveUnavailableTime()", "+recommendTime()", "+confirmSchedule()"] },
+    { name: "TaskService", stereo: "control", x: 370, y: 645, attrs: [], ops: ["+uploadSubmission()", "+approveSubmission()", "+rejectSubmission()", "+calculateProgress()"] },
+    { name: "EventService", stereo: "control", x: 370, y: 845, attrs: [], ops: ["+createEvent()", "+vote()", "+decideEvent()"] },
+    { name: "WorkspaceService", stereo: "control", x: 370, y: 1020, attrs: [], ops: ["+createWorkspace()", "+sendMessage()"] },
 
+    { name: "SupabaseAuthClient", stereo: "control", x: 700, y: 70, attrs: ["-supabaseUrl", "-anonKey"], ops: ["+signUp()", "+signIn()", "+handleAuthResponse()"] },
+    { name: "NotificationService", stereo: "control", x: 700, y: 265, attrs: [], ops: ["+sendInvite()", "+sendVoteRequest()", "+sendVoteReminder()", "+sendWorkspaceNotice()"] },
+    { name: "DataStore", stereo: "storage", x: 700, y: 490, attrs: [], ops: ["+save()", "+findById()", "+findAll()", "+update()"] },
+    { name: "FileStorage", stereo: "storage", x: 700, y: 690, attrs: [], ops: ["+upload()"] },
+    { name: "SupabaseAuthAPI", stereo: "external", x: 700, y: 850, attrs: [], ops: ["+signUpEndpoint()", "+passwordLoginEndpoint()", "+returnSession()"] },
+
+    { name: "Member", stereo: "entity", x: 1030, y: 70, attrs: ["+memberId", "+supabaseUserId", "+studentNo", "+name", "+email", "+role"], ops: [] },
+    { name: "Team", stereo: "entity", x: 1030, y: 255, attrs: ["+teamId", "+teamName", "+description", "+adminId", "+createdAt"], ops: [] },
+    { name: "TeamMember", stereo: "entity", x: 1290, y: 255, attrs: ["+teamMemberId", "+teamId", "+memberId", "+joinedAt"], ops: [] },
+    { name: "ScheduleBlock", stereo: "entity", x: 1030, y: 455, attrs: ["+scheduleId", "+teamId", "+memberId", "+day", "+startTime", "+endTime"], ops: [] },
+    { name: "Task", stereo: "entity", x: 1030, y: 655, attrs: ["+taskId", "+teamId", "+title", "+assigneeId", "+dueDate", "+status"], ops: [] },
+    { name: "Submission", stereo: "entity", x: 1290, y: 655, attrs: ["+submissionId", "+taskId", "+memberId", "+fileUrl", "+status", "+submittedAt"], ops: [] },
+    { name: "Event", stereo: "entity", x: 1030, y: 865, attrs: ["+eventId", "+teamId", "+title", "+voteDeadline", "+status"], ops: [] },
+    { name: "Vote", stereo: "entity", x: 1290, y: 865, attrs: ["+voteId", "+eventId", "+memberId", "+status", "+votedAt"], ops: [] },
+    { name: "TeamWorkspace", stereo: "entity", x: 1030, y: 1060, attrs: ["+workspaceId", "+eventId", "+workspaceName", "+participants", "+createdAt"], ops: [] },
+  ];
+  const boxes = new Map();
+  const width = 1560;
+  const height = 1220;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
 <defs>
-  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-    <path d="M0 0 L10 5 L0 10 z" fill="#1f2937"/>
-  </marker>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#111827"/></marker>
+  <marker id="diamond" viewBox="0 0 16 10" refX="1" refY="5" markerWidth="11" markerHeight="9" orient="auto"><path d="M1 5 L8 1 L15 5 L8 9 z" fill="#111827" stroke="#111827"/></marker>
 </defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
-<text x="28" y="28" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937">${esc(title)}</text>`;
+<text x="40" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#111827">Jo:YUl Class Diagram</text>`;
+  let boxLayer = "";
+  for (const c of classes) {
+    const rendered = classBox(c);
+    boxLayer += rendered.svg;
+    boxes.set(c.name, { ...c, w: 230, h: rendered.h });
+  }
 
-  for (const p of participants) {
-    const x = xOf.get(p.name);
-    if (p.kind === "actor") {
-      svg += `<circle cx="${x}" cy="${headY + 10}" r="10" fill="#fff" stroke="#6d5dfc" stroke-width="1.5"/>
-<line x1="${x}" y1="${headY + 20}" x2="${x}" y2="${headY + 42}" stroke="#6d5dfc" stroke-width="1.5"/>
-<line x1="${x - 16}" y1="${headY + 28}" x2="${x + 16}" y2="${headY + 28}" stroke="#6d5dfc" stroke-width="1.5"/>
-<line x1="${x}" y1="${headY + 42}" x2="${x - 16}" y2="${headY + 58}" stroke="#6d5dfc" stroke-width="1.5"/>
-<line x1="${x}" y1="${headY + 42}" x2="${x + 16}" y2="${headY + 58}" stroke="#6d5dfc" stroke-width="1.5"/>
-<text x="${x}" y="${headY + 78}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#111827">${esc(p.name)}</text>`;
+  function center(name) {
+    const b = boxes.get(name);
+    return { x: b.x + b.w / 2, y: b.y + b.h / 2, b };
+  }
+  function dep(a, b, label = "") {
+    const from = center(a), to = center(b);
+    svg += `<line x1="${from.x + 115}" y1="${from.y}" x2="${to.x - 115}" y2="${to.y}" stroke="#334155" stroke-width="1.1" stroke-dasharray="5 4" marker-end="url(#arrow)"/>`;
+    if (label) svg += `<text x="${(from.x + to.x) / 2}" y="${(from.y + to.y) / 2 - 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#334155">${esc(label)}</text>`;
+  }
+  function assoc(a, b, label = "") {
+    const from = center(a), to = center(b);
+    svg += `<line x1="${from.x + 115}" y1="${from.y}" x2="${to.x - 115}" y2="${to.y}" stroke="#111827" stroke-width="1.1" marker-end="url(#arrow)"/>`;
+    if (label) svg += `<text x="${(from.x + to.x) / 2}" y="${(from.y + to.y) / 2 - 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">${esc(label)}</text>`;
+  }
+  function comp(a, b, label = "") {
+    const from = center(a), to = center(b);
+    svg += `<line x1="${from.x + 115}" y1="${from.y}" x2="${to.x - 115}" y2="${to.y}" stroke="#111827" stroke-width="1.1" marker-start="url(#diamond)" marker-end="url(#arrow)"/>`;
+    if (label) svg += `<text x="${(from.x + to.x) / 2}" y="${(from.y + to.y) / 2 - 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">${esc(label)}</text>`;
+  }
+
+  dep("LoginUI", "AuthService");
+  dep("RegisterUI", "AuthService");
+  dep("AuthService", "SupabaseAuthClient");
+  dep("SupabaseAuthClient", "SupabaseAuthAPI");
+  assoc("AuthService", "Member");
+  dep("AuthService", "DataStore");
+  dep("HomeUI", "TeamService");
+  dep("ScheduleUI", "ScheduleService");
+  dep("TaskBoardUI", "TaskService");
+  dep("EventUI", "EventService");
+  dep("WorkspaceUI", "WorkspaceService");
+  dep("TeamService", "DataStore");
+  dep("ScheduleService", "DataStore");
+  dep("TaskService", "DataStore");
+  dep("EventService", "DataStore");
+  dep("WorkspaceService", "DataStore");
+  dep("TaskService", "FileStorage");
+  dep("TeamService", "NotificationService");
+  dep("EventService", "NotificationService");
+  dep("WorkspaceService", "NotificationService");
+  comp("Team", "TeamMember", "1..*");
+  assoc("TeamMember", "Member", "*");
+  comp("Team", "ScheduleBlock", "*");
+  comp("Team", "Task", "*");
+  comp("Task", "Submission", "*");
+  comp("Event", "Vote", "*");
+  comp("Event", "TeamWorkspace", "0..1");
+  assoc("TeamWorkspace", "Member", "*");
+  assoc("TeamService", "Team");
+  assoc("ScheduleService", "ScheduleBlock");
+  assoc("TaskService", "Task");
+  assoc("TaskService", "Submission");
+  assoc("EventService", "Event");
+  assoc("EventService", "Vote");
+  assoc("WorkspaceService", "TeamWorkspace");
+  return `${svg}${boxLayer}</svg>`;
+}
+
+const sequences = {
+  "03_14_manage_team_workspace_sequence.svg": {
+    title: "3.14 Manage Team Workspace",
+    participants: [
+      ["actor", "sender:Member"],
+      ["participant", "WorkspaceUI"],
+      ["participant", "WorkspaceService"],
+      ["participant", "DataStore"],
+      ["participant", "NotificationService"],
+      ["actor", "recipient:Member"],
+    ],
+    events: [
+      ["sender:Member", "WorkspaceUI", "메시지 입력 후 전송"],
+      ["WorkspaceUI", "WorkspaceUI", "submitMessage(message)"],
+      ["WorkspaceUI", "WorkspaceService", "sendMessage(workspaceId, memberId, message)"],
+      ["WorkspaceService", "DataStore", "save(message)"],
+      ["DataStore", "WorkspaceService", "save success", true],
+      ["WorkspaceService", "NotificationService", "sendWorkspaceNotice(workspaceId)"],
+      ["NotificationService", "recipient:Member", "새 메시지 알림", true],
+      ["WorkspaceService", "WorkspaceUI", "message sent", true],
+      ["WorkspaceUI", "sender:Member", "updateMessageList(message)", true],
+    ],
+  },
+};
+
+function renderSequence({ title, participants, events }) {
+  const laneW = 205;
+  const marginX = 96;
+  const headY = 62;
+  const stepY = 48;
+  const headH = 44;
+  const width = marginX * 2 + (participants.length - 1) * laneW + 150;
+  const height = headY + headH + events.length * stepY + 100;
+  const xOf = new Map(participants.map(([, name], i) => [name, marginX + i * laneW]));
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#111827"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="36" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#111827">${esc(title)}</text>`;
+  for (const [kind, name] of participants) {
+    const x = xOf.get(name);
+    if (kind === "actor") {
+      svg += `<circle cx="${x}" cy="${headY + 10}" r="10" fill="#fff" stroke="#111827" stroke-width="1.3"/>
+<line x1="${x}" y1="${headY + 20}" x2="${x}" y2="${headY + 42}" stroke="#111827" stroke-width="1.3"/>
+<line x1="${x - 16}" y1="${headY + 28}" x2="${x + 16}" y2="${headY + 28}" stroke="#111827" stroke-width="1.3"/>
+<line x1="${x}" y1="${headY + 42}" x2="${x - 16}" y2="${headY + 58}" stroke="#111827" stroke-width="1.3"/>
+<line x1="${x}" y1="${headY + 42}" x2="${x + 16}" y2="${headY + 58}" stroke="#111827" stroke-width="1.3"/>
+<text x="${x}" y="${headY + 78}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#111827">${esc(name)}</text>`;
     } else {
-      svg += `<rect x="${x - 68}" y="${headY}" width="136" height="${headH}" rx="4" fill="#eef2ff" stroke="#7c3aed" stroke-width="1"/>
-<text x="${x}" y="${headY + 26}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#111827">${esc(p.name)}</text>`;
+      svg += `<rect x="${x - 76}" y="${headY}" width="152" height="${headH}" fill="#fff" stroke="#111827" stroke-width="1.2"/>
+<text x="${x}" y="${headY + 27}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#111827">${esc(name)}</text>`;
     }
-    svg += `<line x1="${x}" y1="${lifelineTop}" x2="${x}" y2="${lifelineBottom}" stroke="#7c3aed" stroke-width="1.2" stroke-dasharray="6 6"/>`;
+    svg += `<line x1="${x}" y1="${headY + headH}" x2="${x}" y2="${height - 44}" stroke="#111827" stroke-width="1" stroke-dasharray="6 6"/>`;
   }
-
-  const fragments = [];
-  let y = lifelineTop + 34;
-  for (const event of events) {
-    if (event.type === "fragmentStart") {
-      fragments.push({ y, label: event.label });
-      svg += `<rect x="${marginX - 18}" y="${y - 24}" width="${width - marginX - 38}" height="${stepY * 3}" fill="none" stroke="#7c3aed" stroke-width="1.1" stroke-dasharray="3 3"/>
-<path d="M${marginX - 18} ${y - 24} h54 l-10 18 h-44 z" fill="#faf5ff" stroke="#7c3aed" stroke-width="1"/>
-<text x="${marginX - 8}" y="${y - 11}" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#111827">${esc(event.label)}</text>`;
-      y += stepY * 0.6;
-      continue;
-    }
-    if (event.type === "fragmentElse") {
-      svg += `<line x1="${marginX - 18}" y1="${y - 12}" x2="${width - 56}" y2="${y - 12}" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3 3"/>
-<text x="${marginX + 8}" y="${y - 18}" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#111827">${esc(event.label)}</text>`;
-      y += stepY * 0.6;
-      continue;
-    }
-    if (event.type === "fragmentEnd") {
-      y += stepY * 0.35;
-      continue;
-    }
-    const x1 = xOf.get(event.from);
-    const x2 = xOf.get(event.to);
-    if (x1 == null || x2 == null) continue;
-    const dashed = event.arrow.startsWith("--");
+  let y = headY + headH + 42;
+  for (const [from, to, label, dashed = false] of events) {
+    const x1 = xOf.get(from);
+    const x2 = xOf.get(to);
     if (x1 === x2) {
-      svg += `<path d="M${x1} ${y} h34 q18 0 18 18 q0 18 -18 18 h-34" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"${dashed ? ' stroke-dasharray="4 4"' : ""}/>`;
-      textLines(event.label, 24).forEach((line, i) => {
-        svg += `<text x="${x1 + 48}" y="${y - 5 + i * 14}" font-family="Arial, sans-serif" font-size="12" fill="#111827">${esc(line)}</text>`;
+      svg += `<path d="M${x1} ${y} h36 q18 0 18 18 q0 18 -18 18 h-36" fill="none" stroke="#111827" stroke-width="1.1" marker-end="url(#arrow)"${dashed ? ' stroke-dasharray="4 4"' : ""}/>`;
+      svg += `<text x="${x1 + 46}" y="${y - 5}" font-family="Arial, sans-serif" font-size="12" fill="#111827">${esc(label)}</text>`;
+    } else {
+      svg += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#111827" stroke-width="1.1" marker-end="url(#arrow)"${dashed ? ' stroke-dasharray="4 4"' : ""}/>`;
+      lines(label, Math.max(18, Math.floor(Math.abs(x2 - x1) / 8))).forEach((line, i) => {
+        svg += `<text x="${(x1 + x2) / 2}" y="${y - 7 + i * 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#111827">${esc(line)}</text>`;
       });
-      y += stepY;
-      continue;
     }
-    svg += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"${dashed ? ' stroke-dasharray="4 4"' : ""}/>`;
-    const labelX = (x1 + x2) / 2;
-    textLines(event.label, Math.max(16, Math.floor(Math.abs(x2 - x1) / 8))).forEach((line, i) => {
-      svg += `<text x="${labelX}" y="${y - 7 + i * 14}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#111827">${esc(line)}</text>`;
-    });
     y += stepY;
   }
   return `${svg}</svg>`;
 }
 
-function renderStateDiagram() {
-  const nodes = [
-    ["LaunchSystem", 540, 60], ["RegisterMember", 260, 160], ["WaitRegisterValidation", 260, 250],
-    ["RegisterInformation", 260, 340], ["WaitLoginInput", 540, 220], ["WaitLoginValidation", 540, 320],
-    ["Home", 540, 430], ["TeamList", 190, 540], ["TeamCreating", 70, 650], ["MemberInviting", 300, 650],
-    ["ScheduleEditing", 500, 540], ["ScheduleRecommending", 500, 650], ["ScheduleConfirmed", 500, 760],
-    ["TaskViewing", 790, 540], ["TaskUploading", 790, 650], ["TaskSubmitted", 790, 760],
-    ["TaskApproved", 680, 870], ["TaskRejected", 900, 870], ["EventVoting", 1120, 540],
-    ["VoteReminderWaiting", 1030, 650], ["VoteSubmitted", 1220, 650], ["EventDeciding", 1220, 760],
-    ["EventCanceled", 1090, 870], ["WorkspaceCreated", 1340, 870], ["WorkspaceManaging", 1340, 980],
+function renderStateMachine() {
+  const width = 1420;
+  const height = 980;
+  const states = [
+    ["LaunchSystem", 700, 80], ["WaitLoginInput", 700, 185], ["WaitLoginValidation", 700, 290], ["Home", 700, 405],
+    ["RegisterMember", 360, 185], ["WaitRegisterValidation", 360, 290], ["RegisterInformation", 360, 405],
+    ["TeamList", 180, 555], ["TeamCreating", 80, 675], ["MemberInviting", 280, 675],
+    ["ScheduleEditing", 500, 555], ["ScheduleRecommending", 500, 675], ["ScheduleConfirmed", 500, 795],
+    ["TaskViewing", 780, 555], ["TaskUploading", 780, 675], ["TaskSubmitted", 780, 795],
+    ["TaskApproved", 660, 905], ["TaskRejected", 900, 905],
+    ["EventVoting", 1110, 555], ["VoteReminderWaiting", 1000, 675], ["VoteSubmitted", 1220, 675],
+    ["EventDeciding", 1220, 795], ["EventCanceled", 1080, 905], ["WorkspaceCreated", 1340, 905],
   ];
-  const pos = new Map(nodes.map(([n, x, y]) => [n, { x, y }]));
+  const pos = new Map(states.map(([name, x, y]) => [name, { x, y }]));
   const edges = [
-    ["LaunchSystem", "RegisterMember", "회원가입 선택"], ["RegisterMember", "WaitRegisterValidation", "입력 완료"],
-    ["WaitRegisterValidation", "RegisterMember", "입력 오류"], ["WaitRegisterValidation", "RegisterInformation", "Supabase 인증 성공"],
-    ["RegisterInformation", "Home", "세션 생성"], ["LaunchSystem", "WaitLoginInput", "로그인 화면"],
-    ["WaitLoginInput", "WaitLoginValidation", "로그인 입력"], ["WaitLoginValidation", "WaitLoginInput", "실패"],
-    ["WaitLoginValidation", "Home", "성공"], ["Home", "TeamList", "홈 진입"], ["TeamList", "TeamCreating", "팀 생성"],
-    ["TeamList", "MemberInviting", "멤버 초대"], ["TeamCreating", "TeamList", "완료"], ["MemberInviting", "TeamList", "완료"],
-    ["Home", "ScheduleEditing", "일정 탭"], ["ScheduleEditing", "ScheduleRecommending", "추천"], ["ScheduleRecommending", "ScheduleConfirmed", "확정"],
-    ["ScheduleConfirmed", "Home", "복귀"], ["Home", "TaskViewing", "과제 탭"], ["TaskViewing", "TaskUploading", "업로드"],
+    ["LaunchSystem", "WaitLoginInput", "로그인 화면"], ["LaunchSystem", "RegisterMember", "회원가입 선택"],
+    ["RegisterMember", "WaitRegisterValidation", "입력 완료"], ["WaitRegisterValidation", "RegisterMember", "입력 오류"],
+    ["WaitRegisterValidation", "RegisterInformation", "Supabase 인증 성공"], ["RegisterInformation", "Home", "세션 생성"],
+    ["WaitLoginInput", "WaitLoginValidation", "학번/비밀번호 입력"], ["WaitLoginValidation", "WaitLoginInput", "로그인 실패"],
+    ["WaitLoginValidation", "Home", "로그인 성공"], ["Home", "TeamList", "팀"], ["TeamList", "TeamCreating", "생성"],
+    ["TeamCreating", "TeamList", "완료"], ["TeamList", "MemberInviting", "초대"], ["MemberInviting", "TeamList", "완료"],
+    ["Home", "ScheduleEditing", "일정"], ["ScheduleEditing", "ScheduleRecommending", "추천"], ["ScheduleRecommending", "ScheduleConfirmed", "확정"],
+    ["ScheduleConfirmed", "Home", "복귀"], ["Home", "TaskViewing", "과제"], ["TaskViewing", "TaskUploading", "업로드"],
     ["TaskUploading", "TaskSubmitted", "제출"], ["TaskSubmitted", "TaskApproved", "승인"], ["TaskSubmitted", "TaskRejected", "반려"],
-    ["TaskRejected", "TaskUploading", "재제출"], ["TaskApproved", "TaskViewing", "갱신"], ["Home", "EventVoting", "이벤트 탭"],
-    ["EventVoting", "VoteReminderWaiting", "미투표"], ["VoteReminderWaiting", "EventVoting", "리마인드"], ["EventVoting", "VoteSubmitted", "투표"],
-    ["VoteSubmitted", "EventDeciding", "마감"], ["EventDeciding", "EventCanceled", "참여자 없음"], ["EventDeciding", "WorkspaceCreated", "참여자 있음"],
-    ["WorkspaceCreated", "WorkspaceManaging", "입장"], ["WorkspaceManaging", "Home", "종료"], ["EventCanceled", "Home", "취소"],
+    ["TaskRejected", "TaskUploading", "재제출"], ["TaskApproved", "TaskViewing", "갱신"], ["Home", "EventVoting", "이벤트"],
+    ["EventVoting", "VoteReminderWaiting", "미투표"], ["VoteReminderWaiting", "EventVoting", "리마인드"],
+    ["EventVoting", "VoteSubmitted", "투표"], ["VoteSubmitted", "EventDeciding", "마감"],
+    ["EventDeciding", "EventCanceled", "참여자 없음"], ["EventDeciding", "WorkspaceCreated", "참여자 있음"],
   ];
-  const width = 1530;
-  const height = 1060;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker></defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#111827"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
-<text x="28" y="30" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937">Jo:YUl State Machine Diagram</text>
-<circle cx="540" cy="38" r="10" fill="#111827"/>`;
-  for (const [a, b, label] of edges) {
-    const from = pos.get(a), to = pos.get(b);
-    if (!from || !to) continue;
-    const dx = to.x - from.x, dy = to.y - from.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const x1 = from.x + (dx / len) * 68;
-    const y1 = from.y + (dy / len) * 25;
-    const x2 = to.x - (dx / len) * 68;
-    const y2 = to.y - (dy / len) * 25;
-    svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#64748b" stroke-width="1.2" marker-end="url(#arrow)"/>`;
-    svg += `<text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 4}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#334155">${esc(label)}</text>`;
-  }
-  for (const [name, x, y] of nodes) {
-    svg += `<rect x="${x - 82}" y="${y - 24}" width="164" height="48" rx="18" fill="#f8fafc" stroke="#2563eb" stroke-width="1.2"/>`;
+<text x="36" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#111827">Jo:YUl State Machine Diagram</text>
+<circle cx="700" cy="45" r="10" fill="#111827"/>
+<line x1="700" y1="55" x2="700" y2="56" stroke="#111827" stroke-width="1.2" marker-end="url(#arrow)"/>`;
+  function state(name, x, y) {
+    svg += `<rect x="${x - 82}" y="${y - 24}" width="164" height="48" rx="18" fill="#fff" stroke="#111827" stroke-width="1.2"/>`;
     svg += `<text x="${x}" y="${y + 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#111827">${esc(name)}</text>`;
   }
+  function edge(a, b, label) {
+    const from = pos.get(a), to = pos.get(b);
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const x1 = from.x + (dx / len) * 82;
+    const y1 = from.y + (dy / len) * 24;
+    const x2 = to.x - (dx / len) * 82;
+    const y2 = to.y - (dy / len) * 24;
+    svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/>`;
+    svg += `<text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">${esc(label)}</text>`;
+  }
+  edges.forEach(([a, b, label]) => edge(a, b, label));
+  states.forEach(([name, x, y]) => state(name, x, y));
+  svg += `<circle cx="1340" cy="960" r="13" fill="#fff" stroke="#111827" stroke-width="1.5"/><circle cx="1340" cy="960" r="8" fill="#111827"/>`;
   return `${svg}</svg>`;
 }
 
-writeSvg("02_class_diagram.svg", renderClassDiagram(mermaidBlocks[0]));
-for (let i = 0; i < 14; i++) {
-  const displayNo = `3.${i + 1}`;
-  writeSvg(`${sequenceNames[i]}.svg`, renderSequenceDiagram(mermaidBlocks[i + 1], `${displayNo} ${sequenceNames[i].replace(/^03_\d+_/, "").replace(/_/g, " ")}`));
-}
-writeSvg("04_state_machine_diagram.svg", renderStateDiagram());
-
-let updated = md;
-let blockIndex = 0;
-updated = updated.replace(/```mermaid\r?\n[\s\S]*?\r?\n```/g, () => {
-  const [file, alt] = imageMap[blockIndex++];
-  return `![${alt}](design_diagrams/${file})`;
-});
-fs.writeFileSync(mdPath, updated, "utf8");
-
-console.log(`Generated ${imageMap.length} SVG diagrams in ${path.relative(root, outDir)}`);
+writeSvg("02_class_diagram.svg", renderClassDiagram());
+writeSvg("03_14_manage_team_workspace_sequence.svg", renderSequence(sequences["03_14_manage_team_workspace_sequence.svg"]));
+writeSvg("04_state_machine_diagram.svg", renderStateMachine());
+console.log("Regenerated class diagram, 3.14 sequence diagram, and state machine diagram.");
