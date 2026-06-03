@@ -265,6 +265,7 @@ const sequenceFiles = [
 ];
 
 function renderSequence(title, participants, events) {
+  participants = participants.map(([, name]) => ["participant", name]);
   const laneW = 230;
   const marginX = 110;
   const top = 62;
