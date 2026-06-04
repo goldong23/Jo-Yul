@@ -176,6 +176,131 @@ ${markerDefs()}
   return `${svg}${boxes}${relations}</svg>`;
 }
 
+function renderClassDiagramExpanded() {
+  const boxW = 310;
+  const classes = [
+    { n: "Member", s: "entity", x: 60, y: 100, a: ["+memberId", "+supabaseUserId", "+studentNo", "+name", "+email", "+role"], o: ["+register()", "+login()", "+joinTeam()", "+voteEvent()"] },
+    { n: "Administrator", s: "entity", x: 60, y: 420, a: ["+adminLevel"], o: ["+createTeam()", "+inviteMember()", "+confirmSchedule()", "+approveSubmission()"] },
+    { n: "AuthAccount", s: "entity", x: 60, y: 690, a: ["+authUserId", "+email", "+passwordHash", "+lastLoginAt", "+verified"], o: ["+authenticate()", "+refreshSession()"] },
+    { n: "Notification", s: "entity", x: 60, y: 950, a: ["+notificationId", "+receiverId", "+type", "+content", "+isRead", "+createdAt"], o: ["+send()", "+markRead()"] },
+
+    { n: "Team", s: "aggregate root", x: 450, y: 100, a: ["+teamId", "+teamName", "+description", "+adminId", "+createdAt", "+status"], o: ["+addMember()", "+removeMember()", "+createTask()", "+openEvent()"] },
+    { n: "TeamMember", s: "association", x: 450, y: 420, a: ["+teamMemberId", "+teamId", "+memberId", "+joinedAt", "+memberRole"], o: ["+assignRole()", "+leaveTeam()"] },
+    { n: "ScheduleBlock", s: "entity", x: 450, y: 690, a: ["+scheduleId", "+teamId", "+memberId", "+dayOfWeek", "+startTime", "+endTime", "+blockType"], o: ["+overlaps()", "+isAvailable()"] },
+    { n: "ScheduleRecommendation", s: "value object", x: 450, y: 950, a: ["+recommendationId", "+teamId", "+startTime", "+endTime", "+score"], o: ["+calculateScore()", "+rank()"] },
+
+    { n: "Task", s: "entity", x: 840, y: 100, a: ["+taskId", "+teamId", "+title", "+description", "+assigneeId", "+dueDate", "+status"], o: ["+assignTo()", "+submit()", "+approve()", "+reject()"] },
+    { n: "Submission", s: "entity", x: 840, y: 420, a: ["+submissionId", "+taskId", "+memberId", "+fileUrl", "+status", "+submittedAt"], o: ["+markApproved()", "+markRejected()", "+requestResubmit()"] },
+    { n: "FileAttachment", s: "value object", x: 840, y: 690, a: ["+fileId", "+submissionId", "+fileName", "+fileUrl", "+uploadedAt"], o: ["+validateType()", "+download()"] },
+    { n: "DataStore", s: "repository", x: 840, y: 950, a: ["-connection", "-tableName"], o: ["+save()", "+findById()", "+findAll()", "+update()"] },
+
+    { n: "Event", s: "entity", x: 1230, y: 100, a: ["+eventId", "+teamId", "+title", "+description", "+voteDeadline", "+status"], o: ["+closeVote()", "+cancel()", "+createWorkspace()"] },
+    { n: "Vote", s: "entity", x: 1230, y: 420, a: ["+voteId", "+eventId", "+memberId", "+voteStatus", "+votedAt"], o: ["+submit()", "+cancelVote()"] },
+    { n: "TeamWorkspace", s: "entity", x: 1230, y: 690, a: ["+workspaceId", "+eventId", "+workspaceName", "+createdAt"], o: ["+addParticipant()", "+postMessage()"] },
+    { n: "WorkspaceMessage", s: "entity", x: 1230, y: 950, a: ["+messageId", "+workspaceId", "+senderId", "+content", "+sentAt"], o: ["+edit()", "+delete()"] },
+  ];
+  const nodes = new Map();
+  let boxes = "";
+  for (const c of classes) {
+    const headerH = 44;
+    const lineH = 18;
+    const attrH = Math.max(28, c.a.length * lineH + 14);
+    const opH = Math.max(28, c.o.length * lineH + 14);
+    const h = headerH + attrH + opH;
+    nodes.set(c.n, { x: c.x, y: c.y, w: boxW, h });
+    boxes += `<rect x="${c.x}" y="${c.y}" width="${boxW}" height="${h}" fill="#fffef9" stroke="#111827" stroke-width="1.2"/>`;
+    boxes += `<line x1="${c.x}" y1="${c.y + headerH}" x2="${c.x + boxW}" y2="${c.y + headerH}" stroke="#111827"/>`;
+    boxes += `<line x1="${c.x}" y1="${c.y + headerH + attrH}" x2="${c.x + boxW}" y2="${c.y + headerH + attrH}" stroke="#111827"/>`;
+    boxes += `<text x="${c.x + boxW / 2}" y="${c.y + 15}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#475569">&lt;&lt;${c.s}&gt;&gt;</text>`;
+    boxes += `<text x="${c.x + boxW / 2}" y="${c.y + 34}" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#111827">${c.n}</text>`;
+    c.a.forEach((a, i) => boxes += `<text x="${c.x + 12}" y="${c.y + headerH + 18 + i * lineH}" font-family="Consolas, monospace" font-size="11">${esc(a)}</text>`);
+    c.o.forEach((o, i) => boxes += `<text x="${c.x + 12}" y="${c.y + headerH + attrH + 18 + i * lineH}" font-family="Consolas, monospace" font-size="11">${esc(o)}</text>`);
+  }
+  const width = 1600;
+  const height = 1230;
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+${markerDefs()}
+<rect width="100%" height="100%" fill="${diagramBg}"/>
+<rect x="18" y="18" width="${width - 36}" height="${height - 36}" fill="none" stroke="#111827" stroke-width="1"/>
+<path d="M18 18 H220 L244 42 V58 H18 Z" fill="#fffef9" stroke="#111827" stroke-width="1"/>
+<text x="36" y="39" font-family="Arial, sans-serif" font-size="13">class</text>
+<text x="84" y="39" font-family="Arial, sans-serif" font-size="13" font-weight="700">Jo:YUl Domain Model</text>`;
+  let relations = "";
+  function p(name, side = "right") {
+    const n = nodes.get(name);
+    if (side === "left") return { x: n.x, y: n.y + n.h / 2 };
+    if (side === "top") return { x: n.x + n.w / 2, y: n.y };
+    if (side === "bottom") return { x: n.x + n.w / 2, y: n.y + n.h };
+    return { x: n.x + n.w, y: n.y + n.h / 2 };
+  }
+  function line(d, opts = {}) {
+    const dashed = opts.dashed ? ' stroke-dasharray="5 4"' : "";
+    const start = opts.start ? ` marker-start="url(#${opts.start})"` : "";
+    const end = opts.end ? ` marker-end="url(#${opts.end})"` : "";
+    relations += `<path d="${d}" fill="none" stroke="#111827" stroke-width="1.05"${dashed}${start}${end}/>`;
+  }
+  function mult(x, y, text, anchor = "middle") {
+    relations += `<text x="${x}" y="${y}" text-anchor="${anchor}" font-family="Arial, sans-serif" font-size="11" fill="#111827">${text}</text>`;
+  }
+  function label(x, y, text, anchor = "middle") {
+    relations += labelText(x, y, text, { anchor, size: 11, max: 18 });
+  }
+  function assoc(a, b, opts = {}) {
+    const from = p(a, opts.from || "right");
+    const to = p(b, opts.to || "left");
+    const midX = opts.midX ?? (from.x + to.x) / 2;
+    const midY = opts.midY ?? (from.y + to.y) / 2;
+    const d = opts.d || (opts.vertical
+      ? `M${from.x} ${from.y} V${midY} H${to.x} V${to.y}`
+      : `M${from.x} ${from.y} H${midX} V${to.y} H${to.x}`);
+    line(d, opts);
+    if (opts.label) label(opts.labelX ?? midX, opts.labelY ?? (midY - 12), opts.label);
+  }
+
+  assoc("Administrator", "Member", { from: "top", to: "bottom", d: "M215 420 V350", end: "hollowArrow" });
+  assoc("Member", "TeamMember", { from: "right", to: "left", d: "M370 220 H405 V510 H450", label: "joins", labelX: 398, labelY: 485 });
+  mult(382, 210, "1");
+  mult(432, 500, "0..*");
+
+  assoc("Team", "TeamMember", { from: "bottom", to: "top", vertical: true, midY: 365, start: "diamond" });
+  mult(590, 382, "1");
+  mult(632, 412, "1..*");
+  assoc("Team", "ScheduleBlock", { from: "right", to: "right", d: "M760 220 H800 V775 H760", start: "diamond" });
+  mult(774, 210, "1");
+  mult(774, 765, "0..*");
+  assoc("Team", "ScheduleRecommendation", { from: "right", to: "right", d: "M760 250 H815 V1030 H760", start: "diamond" });
+  mult(790, 242, "1");
+  mult(790, 1020, "0..*");
+  assoc("Team", "Task", { from: "right", to: "left", d: "M760 165 H840", start: "diamond" });
+  mult(775, 154, "1");
+  mult(825, 154, "0..*");
+  assoc("Team", "Event", { from: "top", to: "top", d: "M605 100 V72 H1385 V100", start: "diamond" });
+  mult(620, 94, "1");
+  mult(1368, 94, "0..*");
+
+  assoc("Task", "Submission", { from: "bottom", to: "top", vertical: true, midY: 370, start: "diamond" });
+  mult(980, 392, "1");
+  mult(1018, 410, "0..*");
+  assoc("Submission", "FileAttachment", { from: "bottom", to: "top", vertical: true, midY: 655, start: "diamond" });
+  mult(980, 675, "1");
+  mult(1018, 680, "0..*");
+
+  assoc("Event", "Vote", { from: "bottom", to: "top", vertical: true, midY: 370, start: "diamond" });
+  mult(1370, 374, "1");
+  mult(1408, 410, "0..*");
+  assoc("Event", "TeamWorkspace", { from: "right", to: "right", d: "M1540 205 H1565 V775 H1540", start: "diamond" });
+  mult(1552, 195, "1");
+  mult(1552, 765, "0..1");
+  assoc("TeamWorkspace", "WorkspaceMessage", { from: "bottom", to: "top", vertical: true, midY: 915, start: "diamond" });
+  mult(1370, 910, "1");
+  mult(1408, 940, "0..*");
+
+  assoc("Member", "Notification", { from: "left", to: "left", d: "M60 220 H42 V1030 H60", label: "receives", labelX: 78, labelY: 930, anchor: "start" });
+  mult(48, 210, "1", "start");
+  mult(48, 1020, "0..*", "start");
+  return `${svg}${boxes}${relations}</svg>`;
+}
+
 const sequenceFiles = [
   ["03_01_register_member_sequence.svg", "3.1 Register Member", [["actor", "member:Member"], ["participant", "LoginUI"], ["participant", "RegisterUI"], ["participant", "AuthService"], ["participant", "SupabaseAuthClient"], ["participant", "SupabaseAuthAPI"], ["participant", "DataStore"]], [
     ["member:Member", "LoginUI", "회원가입 선택"], ["LoginUI", "LoginUI", "openRegisterUI()"], ["LoginUI", "RegisterUI", "display()"],
@@ -669,7 +794,7 @@ ${markerDefs()}
   return `${svg}${stateLayer}</svg>`;
 }
 
-writeSvg("02_class_diagram.svg", renderClassDiagram());
+writeSvg("02_class_diagram.svg", renderClassDiagramExpanded());
 for (const [file, title, participants, events] of sequenceFiles) {
   writeSvg(file, renderSequence(title, participants, events));
 }
