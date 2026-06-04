@@ -58,37 +58,38 @@ function labelText(x, y, text, opts = {}) {
 function renderClassDiagram() {
   const boxW = 270;
   const classes = [
-    { n: "LoginUI", s: "boundary", x: 55, y: 90, a: [], o: ["+requestLogin()", "+openRegisterUI()", "+showError()"] },
-    { n: "RegisterUI", s: "boundary", x: 55, y: 245, a: [], o: ["+submitRegister()", "+showSuccess()", "+showError()"] },
-    { n: "HomeUI", s: "boundary", x: 55, y: 400, a: [], o: ["+showHome()", "+updateTeamList()"] },
-    { n: "TeamUI", s: "boundary", x: 55, y: 545, a: [], o: ["+submitTeamData()", "+selectInviteMember()", "+showInviteResult()"] },
-    { n: "ScheduleUI", s: "boundary", x: 55, y: 710, a: [], o: ["+selectUnavailableTime()", "+requestRecommendation()", "+confirmSchedule()"] },
-    { n: "TaskBoardUI", s: "boundary", x: 55, y: 875, a: [], o: ["+requestUpload()", "+showSubmissionDetail()", "+requestApproval()"] },
-    { n: "EventUI", s: "boundary", x: 55, y: 1040, a: [], o: ["+submitEventData()", "+submitVote()", "+requestDecision()"] },
-    { n: "WorkspaceUI", s: "boundary", x: 55, y: 1205, a: [], o: ["+submitMessage()", "+updateMessageList()"] },
+    { n: "LoginUI", s: "boundary", x: 60, y: 95, a: [], o: ["+requestLogin()", "+openRegisterUI()", "+showError()"] },
+    { n: "RegisterUI", s: "boundary", x: 60, y: 250, a: [], o: ["+submitRegister()", "+showSuccess()", "+showError()"] },
+    { n: "HomeUI", s: "boundary", x: 60, y: 405, a: [], o: ["+showHome()", "+updateTeamList()"] },
+    { n: "TeamUI", s: "boundary", x: 60, y: 550, a: [], o: ["+submitTeamData()", "+selectInviteMember()", "+showInviteResult()"] },
+    { n: "ScheduleUI", s: "boundary", x: 60, y: 715, a: [], o: ["+selectUnavailableTime()", "+requestRecommendation()", "+confirmSchedule()"] },
+    { n: "TaskBoardUI", s: "boundary", x: 60, y: 880, a: [], o: ["+requestUpload()", "+showSubmissionDetail()", "+requestApproval()"] },
+    { n: "EventUI", s: "boundary", x: 60, y: 1045, a: [], o: ["+submitEventData()", "+submitVote()", "+requestDecision()"] },
+    { n: "WorkspaceUI", s: "boundary", x: 60, y: 1210, a: [], o: ["+submitMessage()", "+updateMessageList()"] },
 
-    { n: "AuthService", s: "control", x: 410, y: 110, a: [], o: ["+registerMember()", "+login()", "+validateInput()", "+createMemberProfile()"] },
-    { n: "TeamService", s: "control", x: 410, y: 335, a: [], o: ["+createTeam()", "+inviteMember()"] },
-    { n: "ScheduleService", s: "control", x: 410, y: 550, a: [], o: ["+saveUnavailableTime()", "+recommendTime()", "+confirmSchedule()"] },
-    { n: "TaskService", s: "control", x: 410, y: 765, a: [], o: ["+uploadSubmission()", "+approveSubmission()", "+rejectSubmission()", "+calculateProgress()"] },
-    { n: "EventService", s: "control", x: 410, y: 1000, a: [], o: ["+createEvent()", "+vote()", "+decideEvent()"] },
-    { n: "WorkspaceService", s: "control", x: 410, y: 1210, a: [], o: ["+createWorkspace()", "+sendMessage()"] },
+    { n: "AuthService", s: "control", x: 430, y: 115, a: [], o: ["+registerMember()", "+login()", "+validateInput()", "+createMemberProfile()"] },
+    { n: "TeamService", s: "control", x: 430, y: 340, a: [], o: ["+createTeam()", "+inviteMember()"] },
+    { n: "ScheduleService", s: "control", x: 430, y: 555, a: [], o: ["+saveUnavailableTime()", "+recommendTime()", "+confirmSchedule()"] },
+    { n: "TaskService", s: "control", x: 430, y: 770, a: [], o: ["+uploadSubmission()", "+approveSubmission()", "+rejectSubmission()", "+calculateProgress()"] },
+    { n: "EventService", s: "control", x: 430, y: 1005, a: [], o: ["+createEvent()", "+vote()", "+decideEvent()"] },
+    { n: "WorkspaceService", s: "control", x: 430, y: 1215, a: [], o: ["+createWorkspace()", "+sendMessage()"] },
 
-    { n: "SupabaseAuthClient", s: "control", x: 760, y: 110, a: ["-supabaseUrl", "-anonKey"], o: ["+signUp()", "+signIn()", "+handleAuthResponse()"] },
-    { n: "SupabaseAuthAPI", s: "external", x: 760, y: 310, a: [], o: ["+signUpEndpoint()", "+passwordLoginEndpoint()", "+returnSession()"] },
-    { n: "DataStore", s: "storage", x: 760, y: 560, a: [], o: ["+save()", "+findById()", "+findAll()", "+update()"] },
-    { n: "FileStorage", s: "storage", x: 760, y: 780, a: [], o: ["+upload()"] },
-    { n: "NotificationService", s: "control", x: 760, y: 1000, a: [], o: ["+sendInvite()", "+sendVoteRequest()", "+sendVoteReminder()", "+sendWorkspaceNotice()"] },
+    { n: "SupabaseAuthClient", s: "control", x: 805, y: 115, a: ["-supabaseUrl", "-anonKey"], o: ["+signUp()", "+signIn()", "+handleAuthResponse()"] },
+    { n: "SupabaseAuthAPI", s: "external", x: 805, y: 315, a: [], o: ["+signUpEndpoint()", "+passwordLoginEndpoint()", "+returnSession()"] },
+    { n: "NotificationService", s: "control", x: 805, y: 515, a: [], o: ["+sendInvite()", "+sendVoteRequest()", "+sendVoteReminder()", "+sendWorkspaceNotice()"] },
+    { n: "DataStore", s: "storage", x: 805, y: 765, a: [], o: ["+save()", "+findById()", "+findAll()", "+update()"] },
+    { n: "FileStorage", s: "storage", x: 805, y: 1010, a: [], o: ["+upload()"] },
 
-    { n: "Member", s: "entity", x: 1115, y: 90, a: ["+memberId", "+supabaseUserId", "+studentNo", "+name", "+email", "+role"], o: ["+joinTeam()", "+voteEvent()"] },
-    { n: "Team", s: "entity", x: 1115, y: 335, a: ["+teamId", "+teamName", "+description", "+adminId", "+createdAt"], o: ["+addMember()", "+createTask()", "+createEvent()"] },
-    { n: "TeamMember", s: "entity", x: 1465, y: 335, a: ["+teamMemberId", "+teamId", "+memberId", "+joinedAt"], o: ["+assignRole()"] },
-    { n: "ScheduleBlock", s: "entity", x: 1115, y: 560, a: ["+scheduleId", "+teamId", "+memberId", "+day", "+startTime", "+endTime"], o: ["+overlaps()"] },
-    { n: "Task", s: "entity", x: 1115, y: 780, a: ["+taskId", "+teamId", "+title", "+assigneeId", "+dueDate", "+status"], o: ["+submit()", "+approve()", "+reject()"] },
-    { n: "Submission", s: "entity", x: 1465, y: 780, a: ["+submissionId", "+taskId", "+memberId", "+fileUrl", "+status", "+submittedAt"], o: ["+markApproved()", "+markRejected()"] },
-    { n: "Event", s: "entity", x: 1115, y: 1000, a: ["+eventId", "+teamId", "+title", "+voteDeadline", "+status"], o: ["+closeVote()", "+cancel()"] },
-    { n: "Vote", s: "entity", x: 1465, y: 1000, a: ["+voteId", "+eventId", "+memberId", "+status", "+votedAt"], o: ["+submit()"] },
-    { n: "TeamWorkspace", s: "entity", x: 1115, y: 1210, a: ["+workspaceId", "+eventId", "+workspaceName", "+createdAt"], o: ["+addParticipant()", "+postMessage()"] },
+    { n: "Member", s: "entity", x: 1205, y: 95, a: ["+memberId", "+supabaseUserId", "+studentNo", "+name", "+email", "+role"], o: ["+joinTeam()", "+voteEvent()"] },
+    { n: "Team", s: "entity", x: 1205, y: 335, a: ["+teamId", "+teamName", "+description", "+adminId", "+createdAt"], o: ["+addMember()", "+createTask()", "+createEvent()"] },
+    { n: "ScheduleBlock", s: "entity", x: 1205, y: 585, a: ["+scheduleId", "+teamId", "+memberId", "+day", "+startTime", "+endTime"], o: ["+overlaps()"] },
+    { n: "Task", s: "entity", x: 1205, y: 815, a: ["+taskId", "+teamId", "+title", "+assigneeId", "+dueDate", "+status"], o: ["+submit()", "+approve()", "+reject()"] },
+    { n: "Event", s: "entity", x: 1205, y: 1060, a: ["+eventId", "+teamId", "+title", "+voteDeadline", "+status"], o: ["+closeVote()", "+cancel()"] },
+    { n: "TeamWorkspace", s: "entity", x: 1205, y: 1275, a: ["+workspaceId", "+eventId", "+workspaceName", "+createdAt"], o: ["+addParticipant()", "+postMessage()"] },
+
+    { n: "TeamMember", s: "entity", x: 1585, y: 335, a: ["+teamMemberId", "+teamId", "+memberId", "+joinedAt"], o: ["+assignRole()"] },
+    { n: "Submission", s: "entity", x: 1585, y: 815, a: ["+submissionId", "+taskId", "+memberId", "+fileUrl", "+status", "+submittedAt"], o: ["+markApproved()", "+markRejected()"] },
+    { n: "Vote", s: "entity", x: 1585, y: 1060, a: ["+voteId", "+eventId", "+memberId", "+status", "+votedAt"], o: ["+submit()"] },
   ];
   const nodes = new Map();
   let boxes = "";
@@ -107,8 +108,8 @@ function renderClassDiagram() {
     c.a.forEach((a, i) => boxes += `<text x="${c.x + 10}" y="${c.y + headerH + 17 + i * lineH}" font-family="Consolas, monospace" font-size="11">${esc(a)}</text>`);
     c.o.forEach((o, i) => boxes += `<text x="${c.x + 10}" y="${c.y + headerH + attrH + 17 + i * lineH}" font-family="Consolas, monospace" font-size="11">${esc(o)}</text>`);
   }
-  const width = 1810;
-  const height = 1435;
+  const width = 1925;
+  const height = 1495;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
 ${markerDefs()}
 <rect width="100%" height="100%" fill="${diagramBg}"/>
@@ -133,36 +134,59 @@ ${markerDefs()}
     const dashed = type === "dep" ? ' stroke-dasharray="5 4"' : "";
     const markerStart = type === "comp" ? ' marker-start="url(#diamond)"' : "";
     const markerEnd = type === "dep" || type === "gen" ? ' marker-end="url(#hollowArrow)"' : "";
-    const d = opts.vertical
+    const d = opts.d || (opts.vertical
       ? `M${from.x} ${from.y} V${midY} H${to.x} V${to.y}`
-      : `M${from.x} ${from.y} H${midX} V${to.y} H${to.x}`;
+      : `M${from.x} ${from.y} H${midX} V${to.y} H${to.x}`);
     relations += `<path d="${d}" fill="none" stroke="#111827" stroke-width="1.05"${dashed}${markerStart}${markerEnd}/>`;
     if (label) relations += labelText(opts.labelX ?? midX, opts.labelY ?? midY, label, { size: 11, max: 8 });
   }
-  [
+
+  const uiLinks = [
     ["LoginUI", "AuthService"], ["RegisterUI", "AuthService"], ["HomeUI", "TeamService"],
     ["TeamUI", "TeamService"], ["ScheduleUI", "ScheduleService"], ["TaskBoardUI", "TaskService"],
     ["EventUI", "EventService"], ["WorkspaceUI", "WorkspaceService"],
-    ["AuthService", "SupabaseAuthClient"], ["SupabaseAuthClient", "SupabaseAuthAPI"],
-    ["AuthService", "DataStore"], ["TeamService", "DataStore"], ["ScheduleService", "DataStore"],
-    ["TaskService", "DataStore"], ["EventService", "DataStore"], ["WorkspaceService", "DataStore"],
-    ["TaskService", "FileStorage"], ["TeamService", "NotificationService"], ["EventService", "NotificationService"],
-    ["WorkspaceService", "NotificationService"],
-    ["AuthService", "Member"], ["TeamService", "Team"], ["ScheduleService", "ScheduleBlock"],
-    ["TaskService", "Task"], ["TaskService", "Submission"], ["EventService", "Event"],
-    ["EventService", "Vote"], ["WorkspaceService", "TeamWorkspace"],
-  ].forEach(([a, b]) => route(a, b, "dep"));
+  ];
+  uiLinks.forEach(([a, b], i) => route(a, b, "dep", "", { midX: 375 + i * 5 }));
 
-  route("Team", "TeamMember", "comp", "1..*", { labelX: 1398, labelY: 350 });
-  route("TeamMember", "Member", "assoc", "*", { from: "top", to: "right", midY: 70, vertical: true, labelX: 1550, labelY: 84 });
-  route("Team", "ScheduleBlock", "comp", "*", { from: "bottom", to: "top", midY: 552, vertical: true, labelX: 1398, labelY: 552 });
-  route("Team", "Task", "comp", "*", { from: "right", to: "left", midX: 1408, labelX: 1408, labelY: 710 });
-  route("Team", "Event", "comp", "*", { from: "right", to: "left", midX: 1425, labelX: 1425, labelY: 950 });
-  route("Task", "Submission", "comp", "*", { labelX: 1400, labelY: 795 });
-  route("Event", "Vote", "comp", "*", { labelX: 1400, labelY: 1015 });
-  route("Event", "TeamWorkspace", "comp", "0..1", { from: "bottom", to: "top", midY: 1198, vertical: true, labelX: 1398, labelY: 1198 });
-  route("TeamWorkspace", "Member", "assoc", "*", { from: "right", to: "bottom", midX: 1690, labelX: 1680, labelY: 560 });
-  return `${svg}${boxes}${relations}</svg>`;
+  route("AuthService", "SupabaseAuthClient", "dep", "", { midX: 755 });
+  route("SupabaseAuthClient", "SupabaseAuthAPI", "dep", "", { from: "bottom", to: "top", midY: 292, vertical: true });
+  route("TaskService", "FileStorage", "dep", "", { midX: 755 });
+  [["TeamService", 370], ["EventService", 540], ["WorkspaceService", 610]].forEach(([service, laneY]) => {
+    const from = p(service, "right");
+    const to = p("NotificationService", "left");
+    route(service, "NotificationService", "dep", "", { d: `M${from.x} ${from.y} H745 V${laneY} H770 V${to.y} H${to.x}` });
+  });
+  [["AuthService", 320], ["TeamService", 420], ["ScheduleService", 640], ["TaskService", 900], ["EventService", 1125], ["WorkspaceService", 1325]].forEach(([service, laneY]) => {
+    const from = p(service, "right");
+    const to = p("DataStore", "left");
+    route(service, "DataStore", "dep", "", { d: `M${from.x} ${from.y} H785 V${laneY} H790 V${to.y} H${to.x}` });
+  });
+
+  [
+    ["AuthService", "Member", 225],
+    ["TeamService", "Team", 470],
+    ["ScheduleService", "ScheduleBlock", 705],
+    ["TaskService", "Task", 945],
+    ["EventService", "Event", 1180],
+    ["WorkspaceService", "TeamWorkspace", 1395],
+  ].forEach(([service, entity, laneY]) => {
+    const from = p(service, "right");
+    const to = p(entity, "left");
+    route(service, entity, "dep", "", { d: `M${from.x} ${from.y} H1160 V${laneY} H1175 V${to.y} H${to.x}` });
+  });
+  route("TaskService", "Submission", "dep", "", { d: `M${p("TaskService", "right").x} ${p("TaskService", "right").y} H755 V985 H1565 V${p("Submission", "left").y} H${p("Submission", "left").x}` });
+  route("EventService", "Vote", "dep", "", { d: `M${p("EventService", "right").x} ${p("EventService", "right").y} H755 V1185 H1565 V${p("Vote", "left").y} H${p("Vote", "left").x}` });
+
+  route("Team", "TeamMember", "comp", "1..*", { midX: 1545, labelX: 1554, labelY: 382 });
+  route("TeamMember", "Member", "assoc", "*", { from: "top", to: "right", midY: 78, vertical: true, labelX: 1755, labelY: 94 });
+  route("Team", "ScheduleBlock", "comp", "*", { from: "bottom", to: "top", midY: 562, vertical: true, labelX: 1185, labelY: 560 });
+  route("Team", "Task", "comp", "*", { from: "bottom", to: "top", midY: 775, vertical: true, labelX: 1220, labelY: 775 });
+  route("Team", "Event", "comp", "*", { from: "bottom", to: "top", midY: 1030, vertical: true, labelX: 1255, labelY: 1030 });
+  route("Task", "Submission", "comp", "*", { midX: 1545, labelX: 1554, labelY: 860 });
+  route("Event", "Vote", "comp", "*", { midX: 1545, labelX: 1554, labelY: 1105 });
+  route("Event", "TeamWorkspace", "comp", "0..1", { from: "bottom", to: "top", midY: 1248, vertical: true, labelX: 1185, labelY: 1248 });
+  route("TeamWorkspace", "Member", "assoc", "*", { from: "right", to: "bottom", d: `M1475 1359 H1850 V300 H1340`, labelX: 1840, labelY: 710 });
+  return `${svg}${relations}${boxes}</svg>`;
 }
 
 const sequenceFiles = [
@@ -468,18 +492,18 @@ ${markerDefs()}
   edge("WaitLoginValidation", "Home", "[success]", { from: "right", to: "left", midX: 720, labelX: 720, labelY: 282 });
   edge("Home", "Final", "logout / exit", { from: "right", to: "left", midX: 1335, labelY: 220 });
 
-  edge("Home", "TeamList", "team tab", { from: "bottom", to: "top", midY: 465, vertical: true, labelX: 250, labelY: 463 });
+  edge("Home", "TeamList", "team tab", { from: "left", to: "top", midX: 350, labelX: 360, labelY: 335 });
   edge("TeamList", "TeamCreating", "create", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 145, labelY: 650 });
   edge("TeamCreating", "TeamList", "done", { from: "right", to: "left", midX: 250, labelX: 250, labelY: 670 });
   edge("TeamList", "MemberInviting", "invite", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 305, labelY: 650 });
   edge("MemberInviting", "TeamList", "done", { from: "left", to: "right", midX: 255, labelX: 255, labelY: 745 });
 
-  edge("Home", "ScheduleEditing", "schedule tab", { from: "bottom", to: "top", midY: 465, vertical: true, labelX: 590, labelY: 463 });
+  edge("Home", "ScheduleEditing", "schedule tab", { from: "bottom", to: "top", midY: 455, vertical: true, labelX: 650, labelY: 454 });
   edge("ScheduleEditing", "ScheduleRecommending", "recommend", { from: "bottom", to: "top", midY: 620, vertical: true, labelX: 535, labelY: 620 });
   edge("ScheduleRecommending", "ScheduleConfirmed", "confirm", { from: "bottom", to: "top", midY: 700, vertical: true, labelX: 535, labelY: 700 });
   edge("ScheduleConfirmed", "Home", "return", { from: "right", to: "bottom", midX: 810, labelX: 810, labelY: 640 });
 
-  edge("Home", "TaskViewing", "task tab", { from: "bottom", to: "top", midY: 465, vertical: true, labelX: 1040, labelY: 463 });
+  edge("Home", "TaskViewing", "task tab", { from: "right", to: "top", midX: 1125, labelX: 1125, labelY: 335 });
   edge("TaskViewing", "TaskUploading", "upload", { from: "bottom", to: "top", midY: 645, vertical: true, labelX: 955, labelY: 645 });
   edge("TaskUploading", "TaskSubmitted", "submitted", { from: "right", to: "left", labelY: 673 });
   edge("TaskSubmitted", "TaskDecision", "review", { from: "bottom", to: "top", midY: 725, vertical: true, labelX: 1105, labelY: 725 });
@@ -488,7 +512,7 @@ ${markerDefs()}
   edge("TaskRejected", "TaskUploading", "resubmit", { from: "left", to: "right", midX: 980, labelX: 1010, labelY: 835 });
   edge("TaskApproved", "TaskViewing", "progress updated", { from: "top", to: "right", midY: 540, vertical: true, labelX: 930, labelY: 540 });
 
-  edge("Home", "EventVoting", "event tab", { from: "bottom", to: "top", midY: 855, vertical: true, labelX: 310, labelY: 855 });
+  edge("Home", "EventVoting", "event tab", { from: "left", to: "top", midX: 145, labelX: 145, labelY: 830 });
   edge("EventVoting", "VoteReminderWaiting", "not responded", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 135, labelY: 1035 });
   edge("VoteReminderWaiting", "EventVoting", "reminder", { from: "right", to: "right", midX: 340, labelX: 350, labelY: 1030 });
   edge("EventVoting", "VoteSubmitted", "attend / absent", { from: "right", to: "left", labelY: 943 });
