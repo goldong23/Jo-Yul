@@ -151,24 +151,28 @@ ${markerDefs()}
   ].forEach(([a, b]) => route(a, b, "dep"));
   route("SupabaseAuthClient", "SupabaseAuthAPI", "dep", "", { from: "bottom", to: "top", vertical: true, midY: 292 });
 
-  route("Team", "TeamMember", "comp");
+  route("Team", "TeamMember", "comp", "", { d: "M1475 410 H1530 V410.5 H1585" });
   route("Team", "ScheduleBlock", "comp", "", { from: "bottom", to: "top", vertical: true, midY: 558 });
-  route("Team", "Task", "comp", "", { from: "right", to: "top", midX: 1510 });
-  route("Team", "Event", "comp", "", { from: "right", to: "top", midX: 1525 });
+  route("Team", "Task", "comp", "", { d: "M1475 470 H1510 V815 H1340" });
+  route("Team", "Event", "comp", "", { d: "M1475 505 H1525 V1060 H1340" });
   route("Task", "Submission", "comp");
   route("Event", "Vote", "comp");
   route("Event", "TeamWorkspace", "comp", "", { from: "bottom", to: "top", vertical: true, midY: 1262 });
 
-  relations += `<text x="1516" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">1</text>`;
-  relations += `<text x="1565" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">1..*</text>`;
-  relations += `<text x="1370" y="566" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
-  relations += `<text x="1535" y="795" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
-  relations += `<text x="1550" y="1040" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
-  relations += `<text x="1516" y="875" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">1</text>`;
-  relations += `<text x="1565" y="875" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
-  relations += `<text x="1516" y="1105" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">1</text>`;
-  relations += `<text x="1565" y="1105" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
-  relations += `<text x="1372" y="1268" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">0..1</text>`;
+  function multiplicity(x, y, text, anchor = "middle") {
+    relations += `<text x="${x}" y="${y}" text-anchor="${anchor}" font-family="Arial, sans-serif" font-size="11" fill="#111827">${text}</text>`;
+  }
+  multiplicity(1494, 400, "1");
+  multiplicity(1568, 400, "1..*");
+  multiplicity(1362, 578, "*");
+  multiplicity(1362, 808, "*");
+  multiplicity(1362, 1053, "*");
+  multiplicity(1494, 913, "1");
+  multiplicity(1569, 910, "*");
+  multiplicity(1494, 1144, "1");
+  multiplicity(1569, 1138, "*");
+  multiplicity(1322, 1258, "1");
+  multiplicity(1378, 1269, "0..1");
   return `${svg}${boxes}${relations}</svg>`;
 }
 
@@ -464,8 +468,8 @@ ${markerDefs()}
   svg += `<circle cx="1510" cy="240" r="14" fill="#fffef9" stroke="#111827" stroke-width="1.4"/><circle cx="1510" cy="240" r="8" fill="#111827"/>`;
 
   edge("Initial", "LaunchSystem", "", { from: "right", to: "left" });
-  edge("LaunchSystem", "WaitLoginInput", "show login", { from: "bottom", to: "top", midY: 205, vertical: true, labelX: 150, labelY: 206 });
-  edge("LaunchSystem", "RegisterMember", "select sign up", { from: "bottom", to: "top", midX: 120, labelX: 128, labelY: 300 });
+  edge("LaunchSystem", "WaitLoginInput", "show login", { from: "bottom", to: "top", midY: 205, vertical: true, labelX: 158, labelY: 194 });
+  edge("LaunchSystem", "RegisterMember", "select sign up", { from: "bottom", to: "top", midX: 120, labelX: 170, labelY: 300 });
   edge("RegisterMember", "WaitRegisterValidation", "submit data", { from: "right", to: "left", labelY: 338 });
   edge("WaitRegisterValidation", "RegisterMember", "[invalid]", { from: "top", to: "right", midY: 315, vertical: true, labelX: 615, labelY: 330 });
   edge("WaitRegisterValidation", "RegisterInformation", "[valid]", { from: "top", to: "bottom", midX: 585, labelX: 610, labelY: 318 });
@@ -476,35 +480,35 @@ ${markerDefs()}
   edge("Home", "Final", "logout / exit", { from: "right", to: "left", midX: 1335, labelY: 220 });
 
   edge("Home", "TeamList", "team tab", { from: "left", to: "top", midX: 350, labelX: 370, labelY: 326 });
-  edge("TeamList", "TeamCreating", "create", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 105, labelY: 650 });
-  edge("TeamCreating", "TeamList", "done", { from: "right", to: "left", midX: 250, labelX: 270, labelY: 665 });
-  edge("TeamList", "MemberInviting", "invite", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 350, labelY: 650 });
+  edge("TeamList", "TeamCreating", "create", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 100, labelY: 636 });
+  edge("TeamCreating", "TeamList", "done", { from: "right", to: "left", midX: 250, labelX: 270, labelY: 675 });
+  edge("TeamList", "MemberInviting", "invite", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 358, labelY: 636 });
   edge("MemberInviting", "TeamList", "done", { from: "left", to: "right", midX: 255, labelX: 270, labelY: 755 });
 
-  edge("Home", "ScheduleEditing", "schedule tab", { from: "bottom", to: "top", midY: 455, vertical: true, labelX: 660, labelY: 455 });
-  edge("ScheduleEditing", "ScheduleRecommending", "recommend", { from: "bottom", to: "top", midY: 620, vertical: true, labelX: 540, labelY: 620 });
-  edge("ScheduleRecommending", "ScheduleConfirmed", "confirm", { from: "bottom", to: "top", midY: 700, vertical: true, labelX: 540, labelY: 700 });
+  edge("Home", "ScheduleEditing", "schedule tab", { from: "bottom", to: "top", midY: 455, vertical: true, labelX: 680, labelY: 438 });
+  edge("ScheduleEditing", "ScheduleRecommending", "recommend", { from: "bottom", to: "top", midY: 620, vertical: true, labelX: 532, labelY: 612 });
+  edge("ScheduleRecommending", "ScheduleConfirmed", "confirm", { from: "bottom", to: "top", midY: 700, vertical: true, labelX: 532, labelY: 692 });
   edge("ScheduleConfirmed", "Home", "return", { from: "right", to: "bottom", midX: 810, labelX: 825, labelY: 640 });
 
   edge("Home", "TaskViewing", "task tab", { from: "right", to: "top", midX: 1125, labelX: 1145, labelY: 326 });
-  edge("TaskViewing", "TaskUploading", "upload", { from: "bottom", to: "top", midY: 645, vertical: true, labelX: 905, labelY: 645 });
+  edge("TaskViewing", "TaskUploading", "upload", { from: "bottom", to: "top", midY: 645, vertical: true, labelX: 900, labelY: 632 });
   edge("TaskUploading", "TaskSubmitted", "submitted", { from: "right", to: "left", labelY: 665 });
-  edge("TaskSubmitted", "TaskDecision", "review", { from: "bottom", to: "top", midY: 725, vertical: true, labelX: 1118, labelY: 725 });
-  edge("TaskDecision", "TaskApproved", "[approved]", { from: "bottom", to: "top", midY: 780, vertical: true, labelX: 910, labelY: 780 });
+  edge("TaskSubmitted", "TaskDecision", "review", { from: "bottom", to: "top", midY: 725, vertical: true, labelX: 1134, labelY: 718 });
+  edge("TaskDecision", "TaskApproved", "[approved]", { from: "bottom", to: "top", midY: 780, vertical: true, labelX: 900, labelY: 772 });
   edge("TaskDecision", "TaskRejected", "[rejected]", { from: "right", to: "top", midX: 1170, labelX: 1200, labelY: 740 });
   edge("TaskRejected", "TaskUploading", "resubmit", { from: "left", to: "right", midX: 980, labelX: 1005, labelY: 845 });
   edge("TaskApproved", "TaskViewing", "progress updated", { from: "top", to: "right", midY: 540, vertical: true, labelX: 910, labelY: 540 });
 
   edge("Home", "EventVoting", "event tab", { from: "left", to: "top", midX: 145, labelX: 165, labelY: 830 });
-  edge("EventVoting", "VoteReminderWaiting", "not responded", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 115, labelY: 1035 });
+  edge("EventVoting", "VoteReminderWaiting", "not responded", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 112, labelY: 1024 });
   edge("VoteReminderWaiting", "EventVoting", "reminder", { from: "right", to: "right", midX: 340, labelX: 370, labelY: 1030 });
   edge("EventVoting", "VoteSubmitted", "attend / absent", { from: "right", to: "left", labelY: 932 });
   edge("VoteSubmitted", "EventDeciding", "deadline", { from: "right", to: "left", labelY: 932 });
   edge("EventDeciding", "EventDecision", "count votes", { from: "right", to: "left", labelY: 932 });
   edge("EventDecision", "EventCanceled", "[no attendee]", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 750, labelY: 1035 });
   edge("EventDecision", "WorkspaceCreated", "[attendee exists]", { from: "right", to: "left", labelY: 932 });
-  edge("WorkspaceCreated", "WorkspaceManaging", "enter", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 1010, labelY: 1035 });
-  edge("WorkspaceManaging", "Home", "work finished", { from: "right", to: "bottom", midX: 1440, labelX: 1455, labelY: 760 });
+  edge("WorkspaceCreated", "WorkspaceManaging", "enter", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 1008, labelY: 1024 });
+  edge("WorkspaceManaging", "Home", "work finished", { from: "right", to: "bottom", midX: 1440, labelX: 1492, labelY: 760 });
   edge("EventCanceled", "Final", "cancel", { from: "right", to: "bottom", midX: 1510, labelX: 1530, labelY: 910 });
   states.forEach(([n, x, y]) => state(n, x, y));
   return `${svg}</svg>`;
