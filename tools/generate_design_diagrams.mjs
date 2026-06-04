@@ -141,52 +141,35 @@ ${markerDefs()}
     if (label) relations += labelText(opts.labelX ?? midX, opts.labelY ?? midY, label, { size: 11, max: 8 });
   }
 
-  const uiLinks = [
-    ["LoginUI", "AuthService"], ["RegisterUI", "AuthService"], ["HomeUI", "TeamService"],
-    ["TeamUI", "TeamService"], ["ScheduleUI", "ScheduleService"], ["TaskBoardUI", "TaskService"],
-    ["EventUI", "EventService"], ["WorkspaceUI", "WorkspaceService"],
-  ];
-  uiLinks.forEach(([a, b], i) => route(a, b, "dep", "", { midX: 375 + i * 5 }));
-
-  route("AuthService", "SupabaseAuthClient", "dep", "", { midX: 755 });
-  route("SupabaseAuthClient", "SupabaseAuthAPI", "dep", "", { from: "bottom", to: "top", midY: 292, vertical: true });
-  route("TaskService", "FileStorage", "dep", "", { midX: 755 });
-  [["TeamService", 370], ["EventService", 540], ["WorkspaceService", 610]].forEach(([service, laneY]) => {
-    const from = p(service, "right");
-    const to = p("NotificationService", "left");
-    route(service, "NotificationService", "dep", "", { d: `M${from.x} ${from.y} H745 V${laneY} H770 V${to.y} H${to.x}` });
-  });
-  [["AuthService", 320], ["TeamService", 420], ["ScheduleService", 640], ["TaskService", 900], ["EventService", 1125], ["WorkspaceService", 1325]].forEach(([service, laneY]) => {
-    const from = p(service, "right");
-    const to = p("DataStore", "left");
-    route(service, "DataStore", "dep", "", { d: `M${from.x} ${from.y} H785 V${laneY} H790 V${to.y} H${to.x}` });
-  });
-
   [
-    ["AuthService", "Member", 225],
-    ["TeamService", "Team", 470],
-    ["ScheduleService", "ScheduleBlock", 705],
-    ["TaskService", "Task", 945],
-    ["EventService", "Event", 1180],
-    ["WorkspaceService", "TeamWorkspace", 1395],
-  ].forEach(([service, entity, laneY]) => {
-    const from = p(service, "right");
-    const to = p(entity, "left");
-    route(service, entity, "dep", "", { d: `M${from.x} ${from.y} H1160 V${laneY} H1175 V${to.y} H${to.x}` });
-  });
-  route("TaskService", "Submission", "dep", "", { d: `M${p("TaskService", "right").x} ${p("TaskService", "right").y} H755 V985 H1565 V${p("Submission", "left").y} H${p("Submission", "left").x}` });
-  route("EventService", "Vote", "dep", "", { d: `M${p("EventService", "right").x} ${p("EventService", "right").y} H755 V1185 H1565 V${p("Vote", "left").y} H${p("Vote", "left").x}` });
+    ["LoginUI", "AuthService"], ["RegisterUI", "AuthService"],
+    ["HomeUI", "TeamService"], ["TeamUI", "TeamService"],
+    ["ScheduleUI", "ScheduleService"], ["TaskBoardUI", "TaskService"],
+    ["EventUI", "EventService"], ["WorkspaceUI", "WorkspaceService"],
+    ["AuthService", "SupabaseAuthClient"],
+    ["TaskService", "FileStorage"],
+  ].forEach(([a, b]) => route(a, b, "dep"));
+  route("SupabaseAuthClient", "SupabaseAuthAPI", "dep", "", { from: "bottom", to: "top", vertical: true, midY: 292 });
 
-  route("Team", "TeamMember", "comp", "1..*", { midX: 1545, labelX: 1554, labelY: 382 });
-  route("TeamMember", "Member", "assoc", "*", { from: "top", to: "right", midY: 78, vertical: true, labelX: 1755, labelY: 94 });
-  route("Team", "ScheduleBlock", "comp", "*", { from: "bottom", to: "top", midY: 562, vertical: true, labelX: 1185, labelY: 560 });
-  route("Team", "Task", "comp", "*", { from: "bottom", to: "top", midY: 775, vertical: true, labelX: 1220, labelY: 775 });
-  route("Team", "Event", "comp", "*", { from: "bottom", to: "top", midY: 1030, vertical: true, labelX: 1255, labelY: 1030 });
-  route("Task", "Submission", "comp", "*", { midX: 1545, labelX: 1554, labelY: 860 });
-  route("Event", "Vote", "comp", "*", { midX: 1545, labelX: 1554, labelY: 1105 });
-  route("Event", "TeamWorkspace", "comp", "0..1", { from: "bottom", to: "top", midY: 1248, vertical: true, labelX: 1185, labelY: 1248 });
-  route("TeamWorkspace", "Member", "assoc", "*", { from: "right", to: "bottom", d: `M1475 1359 H1850 V300 H1340`, labelX: 1840, labelY: 710 });
-  return `${svg}${relations}${boxes}</svg>`;
+  route("Team", "TeamMember", "comp");
+  route("Team", "ScheduleBlock", "comp", "", { from: "bottom", to: "top", vertical: true, midY: 558 });
+  route("Team", "Task", "comp", "", { from: "right", to: "top", midX: 1510 });
+  route("Team", "Event", "comp", "", { from: "right", to: "top", midX: 1525 });
+  route("Task", "Submission", "comp");
+  route("Event", "Vote", "comp");
+  route("Event", "TeamWorkspace", "comp", "", { from: "bottom", to: "top", vertical: true, midY: 1262 });
+
+  relations += `<text x="1516" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">1</text>`;
+  relations += `<text x="1565" y="390" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">1..*</text>`;
+  relations += `<text x="1370" y="566" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
+  relations += `<text x="1535" y="795" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
+  relations += `<text x="1550" y="1040" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
+  relations += `<text x="1516" y="875" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">1</text>`;
+  relations += `<text x="1565" y="875" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
+  relations += `<text x="1516" y="1105" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">1</text>`;
+  relations += `<text x="1565" y="1105" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">*</text>`;
+  relations += `<text x="1372" y="1268" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#111827">0..1</text>`;
+  return `${svg}${boxes}${relations}</svg>`;
 }
 
 const sequenceFiles = [
@@ -467,7 +450,7 @@ ${markerDefs()}
       : `M${start.x} ${start.y} H${midX} V${end.y} H${end.x}`;
     svg += `<path d="${d}" fill="none" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/>`;
     if (label) {
-      svg += labelText(opts.labelX ?? midX, opts.labelY ?? (midY - 7), label, {
+      svg += labelText(opts.labelX ?? midX, opts.labelY ?? (midY - 18), label, {
         anchor: opts.anchor || "middle",
         size: 11,
         max: opts.max || 22,
@@ -481,48 +464,48 @@ ${markerDefs()}
   svg += `<circle cx="1510" cy="240" r="14" fill="#fffef9" stroke="#111827" stroke-width="1.4"/><circle cx="1510" cy="240" r="8" fill="#111827"/>`;
 
   edge("Initial", "LaunchSystem", "", { from: "right", to: "left" });
-  edge("LaunchSystem", "WaitLoginInput", "show login", { from: "bottom", to: "top", midY: 205, vertical: true, labelX: 170, labelY: 202 });
-  edge("LaunchSystem", "RegisterMember", "select sign up", { from: "bottom", to: "top", midX: 120, labelX: 120, labelY: 292 });
-  edge("RegisterMember", "WaitRegisterValidation", "submit data", { from: "right", to: "left", labelY: 348 });
-  edge("WaitRegisterValidation", "RegisterMember", "[invalid]", { from: "top", to: "right", midY: 315, vertical: true, labelX: 565, labelY: 332 });
-  edge("WaitRegisterValidation", "RegisterInformation", "[valid]", { from: "top", to: "bottom", midX: 585, labelX: 580, labelY: 318 });
-  edge("RegisterInformation", "Home", "session created", { from: "right", to: "left", midX: 805, labelX: 810, labelY: 218 });
-  edge("WaitLoginInput", "WaitLoginValidation", "submit login", { from: "right", to: "left", labelY: 243 });
-  edge("WaitLoginValidation", "WaitLoginInput", "[failure]", { from: "bottom", to: "bottom", midY: 320, vertical: true, labelX: 345, labelY: 304 });
-  edge("WaitLoginValidation", "Home", "[success]", { from: "right", to: "left", midX: 720, labelX: 720, labelY: 282 });
+  edge("LaunchSystem", "WaitLoginInput", "show login", { from: "bottom", to: "top", midY: 205, vertical: true, labelX: 150, labelY: 206 });
+  edge("LaunchSystem", "RegisterMember", "select sign up", { from: "bottom", to: "top", midX: 120, labelX: 128, labelY: 300 });
+  edge("RegisterMember", "WaitRegisterValidation", "submit data", { from: "right", to: "left", labelY: 338 });
+  edge("WaitRegisterValidation", "RegisterMember", "[invalid]", { from: "top", to: "right", midY: 315, vertical: true, labelX: 615, labelY: 330 });
+  edge("WaitRegisterValidation", "RegisterInformation", "[valid]", { from: "top", to: "bottom", midX: 585, labelX: 610, labelY: 318 });
+  edge("RegisterInformation", "Home", "session created", { from: "right", to: "left", midX: 805, labelX: 815, labelY: 206 });
+  edge("WaitLoginInput", "WaitLoginValidation", "submit login", { from: "right", to: "left", labelY: 235 });
+  edge("WaitLoginValidation", "WaitLoginInput", "[failure]", { from: "bottom", to: "bottom", midY: 320, vertical: true, labelX: 348, labelY: 333 });
+  edge("WaitLoginValidation", "Home", "[success]", { from: "right", to: "left", midX: 720, labelX: 730, labelY: 294 });
   edge("Home", "Final", "logout / exit", { from: "right", to: "left", midX: 1335, labelY: 220 });
 
-  edge("Home", "TeamList", "team tab", { from: "left", to: "top", midX: 350, labelX: 360, labelY: 335 });
-  edge("TeamList", "TeamCreating", "create", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 145, labelY: 650 });
-  edge("TeamCreating", "TeamList", "done", { from: "right", to: "left", midX: 250, labelX: 250, labelY: 670 });
-  edge("TeamList", "MemberInviting", "invite", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 305, labelY: 650 });
-  edge("MemberInviting", "TeamList", "done", { from: "left", to: "right", midX: 255, labelX: 255, labelY: 745 });
+  edge("Home", "TeamList", "team tab", { from: "left", to: "top", midX: 350, labelX: 370, labelY: 326 });
+  edge("TeamList", "TeamCreating", "create", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 105, labelY: 650 });
+  edge("TeamCreating", "TeamList", "done", { from: "right", to: "left", midX: 250, labelX: 270, labelY: 665 });
+  edge("TeamList", "MemberInviting", "invite", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 350, labelY: 650 });
+  edge("MemberInviting", "TeamList", "done", { from: "left", to: "right", midX: 255, labelX: 270, labelY: 755 });
 
-  edge("Home", "ScheduleEditing", "schedule tab", { from: "bottom", to: "top", midY: 455, vertical: true, labelX: 650, labelY: 454 });
-  edge("ScheduleEditing", "ScheduleRecommending", "recommend", { from: "bottom", to: "top", midY: 620, vertical: true, labelX: 535, labelY: 620 });
-  edge("ScheduleRecommending", "ScheduleConfirmed", "confirm", { from: "bottom", to: "top", midY: 700, vertical: true, labelX: 535, labelY: 700 });
-  edge("ScheduleConfirmed", "Home", "return", { from: "right", to: "bottom", midX: 810, labelX: 810, labelY: 640 });
+  edge("Home", "ScheduleEditing", "schedule tab", { from: "bottom", to: "top", midY: 455, vertical: true, labelX: 660, labelY: 455 });
+  edge("ScheduleEditing", "ScheduleRecommending", "recommend", { from: "bottom", to: "top", midY: 620, vertical: true, labelX: 540, labelY: 620 });
+  edge("ScheduleRecommending", "ScheduleConfirmed", "confirm", { from: "bottom", to: "top", midY: 700, vertical: true, labelX: 540, labelY: 700 });
+  edge("ScheduleConfirmed", "Home", "return", { from: "right", to: "bottom", midX: 810, labelX: 825, labelY: 640 });
 
-  edge("Home", "TaskViewing", "task tab", { from: "right", to: "top", midX: 1125, labelX: 1125, labelY: 335 });
-  edge("TaskViewing", "TaskUploading", "upload", { from: "bottom", to: "top", midY: 645, vertical: true, labelX: 955, labelY: 645 });
-  edge("TaskUploading", "TaskSubmitted", "submitted", { from: "right", to: "left", labelY: 673 });
-  edge("TaskSubmitted", "TaskDecision", "review", { from: "bottom", to: "top", midY: 725, vertical: true, labelX: 1105, labelY: 725 });
-  edge("TaskDecision", "TaskApproved", "[approved]", { from: "bottom", to: "top", midY: 780, vertical: true, labelX: 965, labelY: 780 });
-  edge("TaskDecision", "TaskRejected", "[rejected]", { from: "right", to: "top", midX: 1170, labelX: 1170, labelY: 748 });
-  edge("TaskRejected", "TaskUploading", "resubmit", { from: "left", to: "right", midX: 980, labelX: 1010, labelY: 835 });
-  edge("TaskApproved", "TaskViewing", "progress updated", { from: "top", to: "right", midY: 540, vertical: true, labelX: 930, labelY: 540 });
+  edge("Home", "TaskViewing", "task tab", { from: "right", to: "top", midX: 1125, labelX: 1145, labelY: 326 });
+  edge("TaskViewing", "TaskUploading", "upload", { from: "bottom", to: "top", midY: 645, vertical: true, labelX: 905, labelY: 645 });
+  edge("TaskUploading", "TaskSubmitted", "submitted", { from: "right", to: "left", labelY: 665 });
+  edge("TaskSubmitted", "TaskDecision", "review", { from: "bottom", to: "top", midY: 725, vertical: true, labelX: 1118, labelY: 725 });
+  edge("TaskDecision", "TaskApproved", "[approved]", { from: "bottom", to: "top", midY: 780, vertical: true, labelX: 910, labelY: 780 });
+  edge("TaskDecision", "TaskRejected", "[rejected]", { from: "right", to: "top", midX: 1170, labelX: 1200, labelY: 740 });
+  edge("TaskRejected", "TaskUploading", "resubmit", { from: "left", to: "right", midX: 980, labelX: 1005, labelY: 845 });
+  edge("TaskApproved", "TaskViewing", "progress updated", { from: "top", to: "right", midY: 540, vertical: true, labelX: 910, labelY: 540 });
 
-  edge("Home", "EventVoting", "event tab", { from: "left", to: "top", midX: 145, labelX: 145, labelY: 830 });
-  edge("EventVoting", "VoteReminderWaiting", "not responded", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 135, labelY: 1035 });
-  edge("VoteReminderWaiting", "EventVoting", "reminder", { from: "right", to: "right", midX: 340, labelX: 350, labelY: 1030 });
-  edge("EventVoting", "VoteSubmitted", "attend / absent", { from: "right", to: "left", labelY: 943 });
-  edge("VoteSubmitted", "EventDeciding", "deadline", { from: "right", to: "left", labelY: 943 });
-  edge("EventDeciding", "EventDecision", "count votes", { from: "right", to: "left", labelY: 943 });
-  edge("EventDecision", "EventCanceled", "[no attendee]", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 770, labelY: 1035 });
-  edge("EventDecision", "WorkspaceCreated", "[attendee exists]", { from: "right", to: "left", labelY: 943 });
-  edge("WorkspaceCreated", "WorkspaceManaging", "enter", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 970, labelY: 1035 });
-  edge("WorkspaceManaging", "Home", "work finished", { from: "right", to: "bottom", midX: 1440, labelX: 1440, labelY: 760 });
-  edge("EventCanceled", "Final", "cancel", { from: "right", to: "bottom", midX: 1510, labelX: 1510, labelY: 910 });
+  edge("Home", "EventVoting", "event tab", { from: "left", to: "top", midX: 145, labelX: 165, labelY: 830 });
+  edge("EventVoting", "VoteReminderWaiting", "not responded", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 115, labelY: 1035 });
+  edge("VoteReminderWaiting", "EventVoting", "reminder", { from: "right", to: "right", midX: 340, labelX: 370, labelY: 1030 });
+  edge("EventVoting", "VoteSubmitted", "attend / absent", { from: "right", to: "left", labelY: 932 });
+  edge("VoteSubmitted", "EventDeciding", "deadline", { from: "right", to: "left", labelY: 932 });
+  edge("EventDeciding", "EventDecision", "count votes", { from: "right", to: "left", labelY: 932 });
+  edge("EventDecision", "EventCanceled", "[no attendee]", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 750, labelY: 1035 });
+  edge("EventDecision", "WorkspaceCreated", "[attendee exists]", { from: "right", to: "left", labelY: 932 });
+  edge("WorkspaceCreated", "WorkspaceManaging", "enter", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 1010, labelY: 1035 });
+  edge("WorkspaceManaging", "Home", "work finished", { from: "right", to: "bottom", midX: 1440, labelX: 1455, labelY: 760 });
+  edge("EventCanceled", "Final", "cancel", { from: "right", to: "bottom", midX: 1510, labelX: 1530, labelY: 910 });
   states.forEach(([n, x, y]) => state(n, x, y));
   return `${svg}</svg>`;
 }
