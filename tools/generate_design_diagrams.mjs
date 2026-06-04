@@ -56,38 +56,39 @@ function labelText(x, y, text, opts = {}) {
 }
 
 function renderClassDiagram() {
-  const boxW = 236;
+  const boxW = 270;
   const classes = [
-    { n: "LoginUI", s: "boundary", x: 50, y: 70, a: [], o: ["+requestLogin()", "+showError()"] },
-    { n: "RegisterUI", s: "boundary", x: 50, y: 214, a: [], o: ["+submitRegister()", "+showSuccess()", "+showError()"] },
-    { n: "HomeUI", s: "boundary", x: 50, y: 378, a: [], o: ["+showHome()", "+updateTeamList()"] },
-    { n: "ScheduleUI", s: "boundary", x: 50, y: 522, a: [], o: ["+selectUnavailableTime()", "+requestRecommendation()", "+confirmSchedule()"] },
-    { n: "TaskBoardUI", s: "boundary", x: 50, y: 704, a: [], o: ["+requestUpload()", "+requestApproval()", "+requestRejection()"] },
-    { n: "EventUI", s: "boundary", x: 50, y: 886, a: [], o: ["+submitVote()", "+requestDecision()"] },
-    { n: "WorkspaceUI", s: "boundary", x: 50, y: 1044, a: [], o: ["+submitMessage()", "+updateMessageList()"] },
+    { n: "LoginUI", s: "boundary", x: 55, y: 90, a: [], o: ["+requestLogin()", "+openRegisterUI()", "+showError()"] },
+    { n: "RegisterUI", s: "boundary", x: 55, y: 245, a: [], o: ["+submitRegister()", "+showSuccess()", "+showError()"] },
+    { n: "HomeUI", s: "boundary", x: 55, y: 400, a: [], o: ["+showHome()", "+updateTeamList()"] },
+    { n: "TeamUI", s: "boundary", x: 55, y: 545, a: [], o: ["+submitTeamData()", "+selectInviteMember()", "+showInviteResult()"] },
+    { n: "ScheduleUI", s: "boundary", x: 55, y: 710, a: [], o: ["+selectUnavailableTime()", "+requestRecommendation()", "+confirmSchedule()"] },
+    { n: "TaskBoardUI", s: "boundary", x: 55, y: 875, a: [], o: ["+requestUpload()", "+showSubmissionDetail()", "+requestApproval()"] },
+    { n: "EventUI", s: "boundary", x: 55, y: 1040, a: [], o: ["+submitEventData()", "+submitVote()", "+requestDecision()"] },
+    { n: "WorkspaceUI", s: "boundary", x: 55, y: 1205, a: [], o: ["+submitMessage()", "+updateMessageList()"] },
 
-    { n: "AuthService", s: "control", x: 375, y: 90, a: [], o: ["+registerMember()", "+login()", "+validateInput()", "+createMemberProfile()"] },
-    { n: "TeamService", s: "control", x: 375, y: 286, a: [], o: ["+createTeam()", "+inviteMember()"] },
-    { n: "ScheduleService", s: "control", x: 375, y: 462, a: [], o: ["+saveUnavailableTime()", "+recommendTime()", "+confirmSchedule()"] },
-    { n: "TaskService", s: "control", x: 375, y: 654, a: [], o: ["+uploadSubmission()", "+approveSubmission()", "+rejectSubmission()", "+calculateProgress()"] },
-    { n: "EventService", s: "control", x: 375, y: 860, a: [], o: ["+createEvent()", "+vote()", "+decideEvent()"] },
-    { n: "WorkspaceService", s: "control", x: 375, y: 1036, a: [], o: ["+createWorkspace()", "+sendMessage()"] },
+    { n: "AuthService", s: "control", x: 410, y: 110, a: [], o: ["+registerMember()", "+login()", "+validateInput()", "+createMemberProfile()"] },
+    { n: "TeamService", s: "control", x: 410, y: 335, a: [], o: ["+createTeam()", "+inviteMember()"] },
+    { n: "ScheduleService", s: "control", x: 410, y: 550, a: [], o: ["+saveUnavailableTime()", "+recommendTime()", "+confirmSchedule()"] },
+    { n: "TaskService", s: "control", x: 410, y: 765, a: [], o: ["+uploadSubmission()", "+approveSubmission()", "+rejectSubmission()", "+calculateProgress()"] },
+    { n: "EventService", s: "control", x: 410, y: 1000, a: [], o: ["+createEvent()", "+vote()", "+decideEvent()"] },
+    { n: "WorkspaceService", s: "control", x: 410, y: 1210, a: [], o: ["+createWorkspace()", "+sendMessage()"] },
 
-    { n: "SupabaseAuthClient", s: "control", x: 700, y: 70, a: ["-supabaseUrl", "-anonKey"], o: ["+signUp()", "+signIn()", "+handleAuthResponse()"] },
-    { n: "NotificationService", s: "control", x: 700, y: 286, a: [], o: ["+sendInvite()", "+sendVoteRequest()", "+sendVoteReminder()", "+sendWorkspaceNotice()"] },
-    { n: "DataStore", s: "storage", x: 700, y: 522, a: [], o: ["+save()", "+findById()", "+findAll()", "+update()"] },
-    { n: "FileStorage", s: "storage", x: 700, y: 704, a: [], o: ["+upload()"] },
-    { n: "SupabaseAuthAPI", s: "external", x: 700, y: 886, a: [], o: ["+signUpEndpoint()", "+passwordLoginEndpoint()", "+returnSession()"] },
+    { n: "SupabaseAuthClient", s: "control", x: 760, y: 110, a: ["-supabaseUrl", "-anonKey"], o: ["+signUp()", "+signIn()", "+handleAuthResponse()"] },
+    { n: "SupabaseAuthAPI", s: "external", x: 760, y: 310, a: [], o: ["+signUpEndpoint()", "+passwordLoginEndpoint()", "+returnSession()"] },
+    { n: "DataStore", s: "storage", x: 760, y: 560, a: [], o: ["+save()", "+findById()", "+findAll()", "+update()"] },
+    { n: "FileStorage", s: "storage", x: 760, y: 780, a: [], o: ["+upload()"] },
+    { n: "NotificationService", s: "control", x: 760, y: 1000, a: [], o: ["+sendInvite()", "+sendVoteRequest()", "+sendVoteReminder()", "+sendWorkspaceNotice()"] },
 
-    { n: "Member", s: "entity", x: 1050, y: 70, a: ["+memberId", "+supabaseUserId", "+studentNo", "+name", "+email", "+role"], o: [] },
-    { n: "Team", s: "entity", x: 1050, y: 286, a: ["+teamId", "+teamName", "+description", "+adminId", "+createdAt"], o: [] },
-    { n: "TeamMember", s: "entity", x: 1330, y: 286, a: ["+teamMemberId", "+teamId", "+memberId", "+joinedAt"], o: [] },
-    { n: "ScheduleBlock", s: "entity", x: 1050, y: 522, a: ["+scheduleId", "+teamId", "+memberId", "+day", "+startTime", "+endTime"], o: [] },
-    { n: "Task", s: "entity", x: 1050, y: 704, a: ["+taskId", "+teamId", "+title", "+assigneeId", "+dueDate", "+status"], o: [] },
-    { n: "Submission", s: "entity", x: 1330, y: 704, a: ["+submissionId", "+taskId", "+memberId", "+fileUrl", "+status", "+submittedAt"], o: [] },
-    { n: "Event", s: "entity", x: 1050, y: 886, a: ["+eventId", "+teamId", "+title", "+voteDeadline", "+status"], o: [] },
-    { n: "Vote", s: "entity", x: 1330, y: 886, a: ["+voteId", "+eventId", "+memberId", "+status", "+votedAt"], o: [] },
-    { n: "TeamWorkspace", s: "entity", x: 1050, y: 1062, a: ["+workspaceId", "+eventId", "+workspaceName", "+participants", "+createdAt"], o: [] },
+    { n: "Member", s: "entity", x: 1115, y: 90, a: ["+memberId", "+supabaseUserId", "+studentNo", "+name", "+email", "+role"], o: ["+joinTeam()", "+voteEvent()"] },
+    { n: "Team", s: "entity", x: 1115, y: 335, a: ["+teamId", "+teamName", "+description", "+adminId", "+createdAt"], o: ["+addMember()", "+createTask()", "+createEvent()"] },
+    { n: "TeamMember", s: "entity", x: 1465, y: 335, a: ["+teamMemberId", "+teamId", "+memberId", "+joinedAt"], o: ["+assignRole()"] },
+    { n: "ScheduleBlock", s: "entity", x: 1115, y: 560, a: ["+scheduleId", "+teamId", "+memberId", "+day", "+startTime", "+endTime"], o: ["+overlaps()"] },
+    { n: "Task", s: "entity", x: 1115, y: 780, a: ["+taskId", "+teamId", "+title", "+assigneeId", "+dueDate", "+status"], o: ["+submit()", "+approve()", "+reject()"] },
+    { n: "Submission", s: "entity", x: 1465, y: 780, a: ["+submissionId", "+taskId", "+memberId", "+fileUrl", "+status", "+submittedAt"], o: ["+markApproved()", "+markRejected()"] },
+    { n: "Event", s: "entity", x: 1115, y: 1000, a: ["+eventId", "+teamId", "+title", "+voteDeadline", "+status"], o: ["+closeVote()", "+cancel()"] },
+    { n: "Vote", s: "entity", x: 1465, y: 1000, a: ["+voteId", "+eventId", "+memberId", "+status", "+votedAt"], o: ["+submit()"] },
+    { n: "TeamWorkspace", s: "entity", x: 1115, y: 1210, a: ["+workspaceId", "+eventId", "+workspaceName", "+createdAt"], o: ["+addParticipant()", "+postMessage()"] },
   ];
   const nodes = new Map();
   let boxes = "";
@@ -98,7 +99,7 @@ function renderClassDiagram() {
     const opH = Math.max(24, c.o.length * lineH + 12);
     const h = headerH + attrH + opH;
     nodes.set(c.n, { x: c.x, y: c.y, w: boxW, h });
-    boxes += `<rect x="${c.x}" y="${c.y}" width="${boxW}" height="${h}" fill="${nodeBg}" stroke="#111827" stroke-width="1.2"/>`;
+    boxes += `<rect x="${c.x}" y="${c.y}" width="${boxW}" height="${h}" fill="#fffef9" stroke="#111827" stroke-width="1.2"/>`;
     boxes += `<line x1="${c.x}" y1="${c.y + headerH}" x2="${c.x + boxW}" y2="${c.y + headerH}" stroke="#111827"/>`;
     boxes += `<line x1="${c.x}" y1="${c.y + headerH + attrH}" x2="${c.x + boxW}" y2="${c.y + headerH + attrH}" stroke="#111827"/>`;
     boxes += `<text x="${c.x + boxW / 2}" y="${c.y + 15}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#475569">&lt;&lt;${c.s}&gt;&gt;</text>`;
@@ -106,12 +107,16 @@ function renderClassDiagram() {
     c.a.forEach((a, i) => boxes += `<text x="${c.x + 10}" y="${c.y + headerH + 17 + i * lineH}" font-family="Consolas, monospace" font-size="11">${esc(a)}</text>`);
     c.o.forEach((o, i) => boxes += `<text x="${c.x + 10}" y="${c.y + headerH + attrH + 17 + i * lineH}" font-family="Consolas, monospace" font-size="11">${esc(o)}</text>`);
   }
-  const width = 1620;
-  const height = 1240;
+  const width = 1810;
+  const height = 1435;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
 ${markerDefs()}
 <rect width="100%" height="100%" fill="${diagramBg}"/>
-<text x="50" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700">Jo:YUl Class Diagram</text>`;
+<rect x="18" y="18" width="${width - 36}" height="${height - 36}" fill="none" stroke="#111827" stroke-width="1"/>
+<path d="M18 18 H190 L214 42 V58 H18 Z" fill="#fffef9" stroke="#111827" stroke-width="1"/>
+<text x="36" y="39" font-family="Arial, sans-serif" font-size="13">class</text>
+<text x="78" y="39" font-family="Arial, sans-serif" font-size="13" font-weight="700">Jo:YUl Design</text>`;
+  let relations = "";
 
   function p(name, side = "right") {
     const n = nodes.get(name);
@@ -120,34 +125,44 @@ ${markerDefs()}
     if (side === "bottom") return { x: n.x + n.w / 2, y: n.y + n.h };
     return { x: n.x + n.w, y: n.y + n.h / 2 };
   }
-  function line(a, b, type = "dep", label = "") {
-    const from = p(a, "right");
-    const to = p(b, "left");
+  function route(a, b, type = "dep", label = "", opts = {}) {
+    const from = p(a, opts.from || "right");
+    const to = p(b, opts.to || "left");
+    const midX = opts.midX ?? (from.x + to.x) / 2;
+    const midY = opts.midY ?? (from.y + to.y) / 2;
     const dashed = type === "dep" ? ' stroke-dasharray="5 4"' : "";
     const markerStart = type === "comp" ? ' marker-start="url(#diamond)"' : "";
-    const markerEnd = type === "gen" ? ' marker-end="url(#hollowArrow)"' : ' marker-end="url(#arrow)"';
-    svg += `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="#111827" stroke-width="1.05"${dashed}${markerStart}${markerEnd}/>`;
-    if (label) svg += labelText((from.x + to.x) / 2, (from.y + to.y) / 2 - 3, label, { size: 11, max: 8 });
+    const markerEnd = type === "dep" || type === "gen" ? ' marker-end="url(#hollowArrow)"' : "";
+    const d = opts.vertical
+      ? `M${from.x} ${from.y} V${midY} H${to.x} V${to.y}`
+      : `M${from.x} ${from.y} H${midX} V${to.y} H${to.x}`;
+    relations += `<path d="${d}" fill="none" stroke="#111827" stroke-width="1.05"${dashed}${markerStart}${markerEnd}/>`;
+    if (label) relations += labelText(opts.labelX ?? midX, opts.labelY ?? midY, label, { size: 11, max: 8 });
   }
   [
-    ["LoginUI", "AuthService"], ["RegisterUI", "AuthService"], ["AuthService", "SupabaseAuthClient"],
-    ["SupabaseAuthClient", "SupabaseAuthAPI"], ["AuthService", "Member", "assoc"], ["AuthService", "DataStore"],
-    ["HomeUI", "TeamService"], ["ScheduleUI", "ScheduleService"], ["TaskBoardUI", "TaskService"],
-    ["EventUI", "EventService"], ["WorkspaceUI", "WorkspaceService"], ["TeamService", "DataStore"],
-    ["ScheduleService", "DataStore"], ["TaskService", "DataStore"], ["EventService", "DataStore"],
-    ["WorkspaceService", "DataStore"], ["TaskService", "FileStorage"], ["TeamService", "NotificationService"],
-    ["EventService", "NotificationService"], ["WorkspaceService", "NotificationService"],
-    ["TeamService", "Team", "assoc"], ["ScheduleService", "ScheduleBlock", "assoc"], ["TaskService", "Task", "assoc"],
-    ["TaskService", "Submission", "assoc"], ["EventService", "Event", "assoc"], ["EventService", "Vote", "assoc"],
-    ["WorkspaceService", "TeamWorkspace", "assoc"],
-  ].forEach(([a, b, t]) => line(a, b, t || "dep"));
-  [
-    ["Team", "TeamMember", "comp", "1..*"], ["TeamMember", "Member", "assoc", "*"],
-    ["Team", "ScheduleBlock", "comp", "*"], ["Team", "Task", "comp", "*"],
-    ["Task", "Submission", "comp", "*"], ["Event", "Vote", "comp", "*"],
-    ["Event", "TeamWorkspace", "comp", "0..1"], ["TeamWorkspace", "Member", "assoc", "*"],
-  ].forEach(([a, b, t, l]) => line(a, b, t, l));
-  return `${svg}${boxes}</svg>`;
+    ["LoginUI", "AuthService"], ["RegisterUI", "AuthService"], ["HomeUI", "TeamService"],
+    ["TeamUI", "TeamService"], ["ScheduleUI", "ScheduleService"], ["TaskBoardUI", "TaskService"],
+    ["EventUI", "EventService"], ["WorkspaceUI", "WorkspaceService"],
+    ["AuthService", "SupabaseAuthClient"], ["SupabaseAuthClient", "SupabaseAuthAPI"],
+    ["AuthService", "DataStore"], ["TeamService", "DataStore"], ["ScheduleService", "DataStore"],
+    ["TaskService", "DataStore"], ["EventService", "DataStore"], ["WorkspaceService", "DataStore"],
+    ["TaskService", "FileStorage"], ["TeamService", "NotificationService"], ["EventService", "NotificationService"],
+    ["WorkspaceService", "NotificationService"],
+    ["AuthService", "Member"], ["TeamService", "Team"], ["ScheduleService", "ScheduleBlock"],
+    ["TaskService", "Task"], ["TaskService", "Submission"], ["EventService", "Event"],
+    ["EventService", "Vote"], ["WorkspaceService", "TeamWorkspace"],
+  ].forEach(([a, b]) => route(a, b, "dep"));
+
+  route("Team", "TeamMember", "comp", "1..*", { labelX: 1398, labelY: 350 });
+  route("TeamMember", "Member", "assoc", "*", { from: "top", to: "right", midY: 70, vertical: true, labelX: 1550, labelY: 84 });
+  route("Team", "ScheduleBlock", "comp", "*", { from: "bottom", to: "top", midY: 552, vertical: true, labelX: 1398, labelY: 552 });
+  route("Team", "Task", "comp", "*", { from: "right", to: "left", midX: 1408, labelX: 1408, labelY: 710 });
+  route("Team", "Event", "comp", "*", { from: "right", to: "left", midX: 1425, labelX: 1425, labelY: 950 });
+  route("Task", "Submission", "comp", "*", { labelX: 1400, labelY: 795 });
+  route("Event", "Vote", "comp", "*", { labelX: 1400, labelY: 1015 });
+  route("Event", "TeamWorkspace", "comp", "0..1", { from: "bottom", to: "top", midY: 1198, vertical: true, labelX: 1398, labelY: 1198 });
+  route("TeamWorkspace", "Member", "assoc", "*", { from: "right", to: "bottom", midX: 1690, labelX: 1680, labelY: 560 });
+  return `${svg}${boxes}${relations}</svg>`;
 }
 
 const sequenceFiles = [
@@ -352,95 +367,138 @@ ${markerDefs()}
 }
 
 function renderStateMachine() {
-  const width = 1540;
-  const height = 1080;
+  const width = 1710;
+  const height = 1260;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
 ${markerDefs()}
 <rect width="100%" height="100%" fill="${diagramBg}"/>
-<text x="40" y="34" font-family="Arial, sans-serif" font-size="22" font-weight="700">Jo:YUl State Machine Diagram</text>`;
+<rect x="18" y="18" width="${width - 36}" height="${height - 36}" fill="none" stroke="#111827" stroke-width="1"/>
+<path d="M18 18 H220 L244 42 V58 H18 Z" fill="#fffef9" stroke="#111827" stroke-width="1"/>
+<text x="36" y="39" font-family="Arial, sans-serif" font-size="13">stm</text>
+<text x="78" y="39" font-family="Arial, sans-serif" font-size="13" font-weight="700">Jo:YUl Application</text>`;
   const regions = [
-    ["Authentication", 40, 70, 430, 360],
-    ["Team Management", 40, 470, 430, 270],
-    ["Schedule Management", 520, 70, 430, 360],
-    ["Task Management", 520, 470, 430, 360],
-    ["Event / Workspace", 1000, 70, 480, 830],
+    ["Authentication", 60, 88, 710, 335],
+    ["Team Management", 60, 505, 330, 285],
+    ["Schedule Management", 455, 505, 330, 285],
+    ["Task Management", 850, 505, 430, 330],
+    ["Event / Workspace", 60, 880, 1280, 315],
   ];
   for (const [title, x, y, w, h] of regions) {
-    svg += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${nodeBg}" stroke="#111827" stroke-width="1.1"/>`;
+    svg += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="#fffef9" stroke="#111827" stroke-width="1.1"/>`;
+    svg += `<line x1="${x}" y1="${y + 32}" x2="${x + w}" y2="${y + 32}" stroke="#111827" stroke-width="1"/>`;
     svg += `<text x="${x + 12}" y="${y + 22}" font-family="Arial, sans-serif" font-size="14" font-weight="700">${esc(title)}</text>`;
   }
   const states = [
-    ["LaunchSystem", 255, 130], ["WaitLoginInput", 255, 215], ["WaitLoginValidation", 255, 300], ["RegisterMember", 105, 215], ["WaitRegisterValidation", 105, 300], ["RegisterInformation", 105, 380], ["Home", 760, 130],
-    ["TeamList", 255, 525], ["TeamCreating", 120, 650], ["MemberInviting", 330, 650],
-    ["ScheduleEditing", 760, 215], ["ScheduleRecommending", 760, 300], ["ScheduleConfirmed", 760, 380],
-    ["TaskViewing", 760, 525], ["TaskUploading", 650, 650], ["TaskSubmitted", 760, 735], ["TaskApproved", 640, 800], ["TaskRejected", 875, 800],
-    ["EventVoting", 1240, 130], ["VoteReminderWaiting", 1115, 245], ["VoteSubmitted", 1360, 245], ["EventDeciding", 1360, 360], ["EventCanceled", 1120, 475], ["WorkspaceCreated", 1360, 475], ["WorkspaceManaging", 1360, 620],
+    ["LaunchSystem", 210, 145],
+    ["WaitLoginInput", 210, 260],
+    ["WaitLoginValidation", 470, 260],
+    ["RegisterMember", 210, 365],
+    ["WaitRegisterValidation", 470, 365],
+    ["RegisterInformation", 650, 260],
+    ["Home", 950, 240],
+    ["TeamList", 225, 580],
+    ["TeamCreating", 135, 710],
+    ["MemberInviting", 310, 710],
+    ["ScheduleEditing", 620, 580],
+    ["ScheduleRecommending", 620, 660],
+    ["ScheduleConfirmed", 620, 740],
+    ["TaskViewing", 1065, 580],
+    ["TaskUploading", 940, 690],
+    ["TaskSubmitted", 1065, 690],
+    ["TaskApproved", 960, 805],
+    ["TaskRejected", 1170, 805],
+    ["EventVoting", 215, 960],
+    ["VoteReminderWaiting", 215, 1100],
+    ["VoteSubmitted", 465, 960],
+    ["EventDeciding", 665, 960],
+    ["EventCanceled", 830, 1100],
+    ["WorkspaceCreated", 1060, 960],
+    ["WorkspaceManaging", 1060, 1100],
   ];
-  const pos = new Map(states.map(([n, x, y]) => [n, { x, y }]));
+  const pos = new Map(states.map(([n, x, y]) => [n, { x, y, w: 168, h: 48 }]));
+  pos.set("Initial", { x: 105, y: 145, w: 20, h: 20 });
+  pos.set("TaskDecision", { x: 1065, y: 750, w: 34, h: 34 });
+  pos.set("EventDecision", { x: 830, y: 960, w: 34, h: 34 });
+  pos.set("Final", { x: 1510, y: 240, w: 26, h: 26 });
   function state(name, x, y) {
-    svg += `<rect x="${x - 84}" y="${y - 24}" width="168" height="48" rx="18" fill="${nodeBg}" stroke="#111827" stroke-width="1.2"/>`;
+    svg += `<rect x="${x - 84}" y="${y - 24}" width="168" height="48" rx="16" fill="#fffef9" stroke="#111827" stroke-width="1.2"/>`;
     svg += `<text x="${x}" y="${y + 5}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700">${esc(name)}</text>`;
   }
-  function edge(a, b, label, bend = 0) {
+  function port(node, side) {
+    if (side === "left") return { x: node.x - node.w / 2, y: node.y };
+    if (side === "right") return { x: node.x + node.w / 2, y: node.y };
+    if (side === "top") return { x: node.x, y: node.y - node.h / 2 };
+    return { x: node.x, y: node.y + node.h / 2 };
+  }
+  function edge(a, b, label = "", opts = {}) {
     const from = typeof a === "string" ? pos.get(a) : a;
     const to = typeof b === "string" ? pos.get(b) : b;
     if (!from || !to) return;
-    const dx = to.x - from.x;
-    const dy = to.y - from.y;
-    const len = Math.hypot(dx, dy) || 1;
-    const x1 = from.x + (dx / len) * 84;
-    const y1 = from.y + (dy / len) * 24;
-    const x2 = to.x - (dx / len) * 84;
-    const y2 = to.y - (dy / len) * 24;
-    if (bend) {
-      const mx = (x1 + x2) / 2 + bend;
-      const my = (y1 + y2) / 2 - Math.abs(bend) * 0.2;
-      svg += `<path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" fill="none" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/>`;
-      svg += labelText(mx, my - 18, label, { size: 11, max: 14 });
-    } else {
-      svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/>`;
-      svg += labelText((x1 + x2) / 2, (y1 + y2) / 2 - 18, label, { size: 11, max: 14 });
+    const start = port(from, opts.from || "right");
+    const end = port(to, opts.to || "left");
+    const midX = opts.midX ?? (start.x + end.x) / 2;
+    const midY = opts.midY ?? (start.y + end.y) / 2;
+    const d = opts.vertical
+      ? `M${start.x} ${start.y} V${midY} H${end.x} V${end.y}`
+      : `M${start.x} ${start.y} H${midX} V${end.y} H${end.x}`;
+    svg += `<path d="${d}" fill="none" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/>`;
+    if (label) {
+      svg += labelText(opts.labelX ?? midX, opts.labelY ?? (midY - 7), label, {
+        anchor: opts.anchor || "middle",
+        size: 11,
+        max: opts.max || 22,
+      });
     }
   }
-  svg += `<circle cx="255" cy="95" r="10" fill="#111827"/>`;
-  edge({ x: 255, y: 95 }, "LaunchSystem", "");
-  edge("LaunchSystem", "WaitLoginInput", "로그인 화면");
-  edge("LaunchSystem", "RegisterMember", "회원가입 선택");
-  edge("RegisterMember", "WaitRegisterValidation", "입력 완료");
-  edge("WaitRegisterValidation", "RegisterMember", "입력 오류", -45);
-  edge("WaitRegisterValidation", "RegisterInformation", "Supabase 인증 성공");
-  edge("RegisterInformation", "Home", "세션 생성", 40);
-  edge("WaitLoginInput", "WaitLoginValidation", "로그인 입력");
-  edge("WaitLoginValidation", "WaitLoginInput", "실패", 50);
-  edge("WaitLoginValidation", "Home", "성공");
-  edge("Home", "TeamList", "팀 목록");
-  edge("TeamList", "TeamCreating", "팀 생성");
-  edge("TeamCreating", "TeamList", "완료", -55);
-  edge("TeamList", "MemberInviting", "멤버 초대");
-  edge("MemberInviting", "TeamList", "완료", 55);
-  edge("Home", "ScheduleEditing", "일정 탭");
-  edge("ScheduleEditing", "ScheduleRecommending", "추천 요청");
-  edge("ScheduleRecommending", "ScheduleConfirmed", "관리자 확정");
-  edge("ScheduleConfirmed", "Home", "알림 후 복귀", 60);
-  edge("Home", "TaskViewing", "과제 탭");
-  edge("TaskViewing", "TaskUploading", "업로드");
-  edge("TaskUploading", "TaskSubmitted", "제출 완료");
-  edge("TaskSubmitted", "TaskApproved", "승인");
-  edge("TaskSubmitted", "TaskRejected", "반려");
-  edge("TaskRejected", "TaskUploading", "재제출", 50);
-  edge("TaskApproved", "TaskViewing", "진행률 갱신", -40);
-  edge("Home", "EventVoting", "이벤트 탭");
-  edge("EventVoting", "VoteReminderWaiting", "미투표");
-  edge("VoteReminderWaiting", "EventVoting", "리마인드", -50);
-  edge("EventVoting", "VoteSubmitted", "참여/불참");
-  edge("VoteSubmitted", "EventDeciding", "투표 마감");
-  edge("EventDeciding", "EventCanceled", "[참여자 없음]");
-  edge("EventDeciding", "WorkspaceCreated", "[참여자 있음]");
-  edge("WorkspaceCreated", "WorkspaceManaging", "입장");
-  edge("WorkspaceManaging", "Home", "작업 종료", 110);
-  svg += `<circle cx="1240" cy="840" r="13" fill="${nodeBg}" stroke="#111827" stroke-width="1.4"/><circle cx="1240" cy="840" r="8" fill="#111827"/>`;
-  edge("EventCanceled", { x: 1240, y: 840 }, "이벤트 취소");
-  edge("Home", { x: 1240, y: 840 }, "로그아웃/종료", 70);
+
+  svg += `<circle cx="105" cy="145" r="10" fill="#111827"/>`;
+  svg += `<path d="M1065 733 L1082 750 L1065 767 L1048 750 Z" fill="#fffef9" stroke="#111827" stroke-width="1.2"/>`;
+  svg += `<path d="M830 943 L847 960 L830 977 L813 960 Z" fill="#fffef9" stroke="#111827" stroke-width="1.2"/>`;
+  svg += `<circle cx="1510" cy="240" r="14" fill="#fffef9" stroke="#111827" stroke-width="1.4"/><circle cx="1510" cy="240" r="8" fill="#111827"/>`;
+
+  edge("Initial", "LaunchSystem", "", { from: "right", to: "left" });
+  edge("LaunchSystem", "WaitLoginInput", "show login", { from: "bottom", to: "top", midY: 205, vertical: true, labelX: 170, labelY: 202 });
+  edge("LaunchSystem", "RegisterMember", "select sign up", { from: "bottom", to: "top", midX: 120, labelX: 120, labelY: 292 });
+  edge("RegisterMember", "WaitRegisterValidation", "submit data", { from: "right", to: "left", labelY: 348 });
+  edge("WaitRegisterValidation", "RegisterMember", "[invalid]", { from: "top", to: "right", midY: 315, vertical: true, labelX: 565, labelY: 332 });
+  edge("WaitRegisterValidation", "RegisterInformation", "[valid]", { from: "top", to: "bottom", midX: 585, labelX: 580, labelY: 318 });
+  edge("RegisterInformation", "Home", "session created", { from: "right", to: "left", midX: 805, labelX: 810, labelY: 218 });
+  edge("WaitLoginInput", "WaitLoginValidation", "submit login", { from: "right", to: "left", labelY: 243 });
+  edge("WaitLoginValidation", "WaitLoginInput", "[failure]", { from: "bottom", to: "bottom", midY: 320, vertical: true, labelX: 345, labelY: 304 });
+  edge("WaitLoginValidation", "Home", "[success]", { from: "right", to: "left", midX: 720, labelX: 720, labelY: 282 });
+  edge("Home", "Final", "logout / exit", { from: "right", to: "left", midX: 1335, labelY: 220 });
+
+  edge("Home", "TeamList", "team tab", { from: "bottom", to: "top", midY: 465, vertical: true, labelX: 250, labelY: 463 });
+  edge("TeamList", "TeamCreating", "create", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 145, labelY: 650 });
+  edge("TeamCreating", "TeamList", "done", { from: "right", to: "left", midX: 250, labelX: 250, labelY: 670 });
+  edge("TeamList", "MemberInviting", "invite", { from: "bottom", to: "top", midY: 650, vertical: true, labelX: 305, labelY: 650 });
+  edge("MemberInviting", "TeamList", "done", { from: "left", to: "right", midX: 255, labelX: 255, labelY: 745 });
+
+  edge("Home", "ScheduleEditing", "schedule tab", { from: "bottom", to: "top", midY: 465, vertical: true, labelX: 590, labelY: 463 });
+  edge("ScheduleEditing", "ScheduleRecommending", "recommend", { from: "bottom", to: "top", midY: 620, vertical: true, labelX: 535, labelY: 620 });
+  edge("ScheduleRecommending", "ScheduleConfirmed", "confirm", { from: "bottom", to: "top", midY: 700, vertical: true, labelX: 535, labelY: 700 });
+  edge("ScheduleConfirmed", "Home", "return", { from: "right", to: "bottom", midX: 810, labelX: 810, labelY: 640 });
+
+  edge("Home", "TaskViewing", "task tab", { from: "bottom", to: "top", midY: 465, vertical: true, labelX: 1040, labelY: 463 });
+  edge("TaskViewing", "TaskUploading", "upload", { from: "bottom", to: "top", midY: 645, vertical: true, labelX: 955, labelY: 645 });
+  edge("TaskUploading", "TaskSubmitted", "submitted", { from: "right", to: "left", labelY: 673 });
+  edge("TaskSubmitted", "TaskDecision", "review", { from: "bottom", to: "top", midY: 725, vertical: true, labelX: 1105, labelY: 725 });
+  edge("TaskDecision", "TaskApproved", "[approved]", { from: "bottom", to: "top", midY: 780, vertical: true, labelX: 965, labelY: 780 });
+  edge("TaskDecision", "TaskRejected", "[rejected]", { from: "right", to: "top", midX: 1170, labelX: 1170, labelY: 748 });
+  edge("TaskRejected", "TaskUploading", "resubmit", { from: "left", to: "right", midX: 980, labelX: 1010, labelY: 835 });
+  edge("TaskApproved", "TaskViewing", "progress updated", { from: "top", to: "right", midY: 540, vertical: true, labelX: 930, labelY: 540 });
+
+  edge("Home", "EventVoting", "event tab", { from: "bottom", to: "top", midY: 855, vertical: true, labelX: 310, labelY: 855 });
+  edge("EventVoting", "VoteReminderWaiting", "not responded", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 135, labelY: 1035 });
+  edge("VoteReminderWaiting", "EventVoting", "reminder", { from: "right", to: "right", midX: 340, labelX: 350, labelY: 1030 });
+  edge("EventVoting", "VoteSubmitted", "attend / absent", { from: "right", to: "left", labelY: 943 });
+  edge("VoteSubmitted", "EventDeciding", "deadline", { from: "right", to: "left", labelY: 943 });
+  edge("EventDeciding", "EventDecision", "count votes", { from: "right", to: "left", labelY: 943 });
+  edge("EventDecision", "EventCanceled", "[no attendee]", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 770, labelY: 1035 });
+  edge("EventDecision", "WorkspaceCreated", "[attendee exists]", { from: "right", to: "left", labelY: 943 });
+  edge("WorkspaceCreated", "WorkspaceManaging", "enter", { from: "bottom", to: "top", midY: 1035, vertical: true, labelX: 970, labelY: 1035 });
+  edge("WorkspaceManaging", "Home", "work finished", { from: "right", to: "bottom", midX: 1440, labelX: 1440, labelY: 760 });
+  edge("EventCanceled", "Final", "cancel", { from: "right", to: "bottom", midX: 1510, labelX: 1510, labelY: 910 });
   states.forEach(([n, x, y]) => state(n, x, y));
   return `${svg}</svg>`;
 }
