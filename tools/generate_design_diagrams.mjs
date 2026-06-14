@@ -61,17 +61,17 @@ function renderClassDiagram() {
     { n: "LoginUI", s: "boundary", x: 60, y: 95, a: [], o: ["+requestLogin()", "+openRegisterUI()", "+showError()"] },
     { n: "RegisterUI", s: "boundary", x: 60, y: 250, a: [], o: ["+submitRegister()", "+showSuccess()", "+showError()"] },
     { n: "HomeUI", s: "boundary", x: 60, y: 405, a: [], o: ["+showHome()", "+updateTeamList()"] },
-    { n: "TeamUI", s: "boundary", x: 60, y: 550, a: [], o: ["+submitTeamData()", "+selectInviteMember()", "+showInviteResult()"] },
+    { n: "TeamUI", s: "boundary", x: 60, y: 550, a: [], o: ["+submitTeamData()", "+inviteByNickname()", "+showInviteResult()"] },
     { n: "ScheduleUI", s: "boundary", x: 60, y: 715, a: [], o: ["+selectUnavailableTime()", "+requestRecommendation()", "+confirmSchedule()"] },
-    { n: "TaskBoardUI", s: "boundary", x: 60, y: 880, a: [], o: ["+requestUpload()", "+showSubmissionDetail()", "+requestApproval()"] },
-    { n: "EventUI", s: "boundary", x: 60, y: 1045, a: [], o: ["+submitEventData()", "+submitVote()", "+requestDecision()"] },
+    { n: "TaskBoardUI", s: "boundary", x: 60, y: 880, a: [], o: ["+requestUpload()", "+showSubmissionDetail()", "+blockReupload()", "+requestApproval()"] },
+    { n: "EventUI", s: "boundary", x: 60, y: 1045, a: [], o: ["+submitEventData()", "+showRemainingTime()", "+submitVote()", "+requestDecision()"] },
     { n: "WorkspaceUI", s: "boundary", x: 60, y: 1210, a: [], o: ["+submitMessage()", "+updateMessageList()"] },
 
     { n: "AuthService", s: "control", x: 430, y: 115, a: [], o: ["+registerMember()", "+login()", "+validateInput()", "+createMemberProfile()"] },
     { n: "TeamService", s: "control", x: 430, y: 340, a: [], o: ["+createTeam()", "+inviteMember()"] },
     { n: "ScheduleService", s: "control", x: 430, y: 555, a: [], o: ["+saveUnavailableTime()", "+recommendTime()", "+confirmSchedule()"] },
-    { n: "TaskService", s: "control", x: 430, y: 770, a: [], o: ["+uploadSubmission()", "+approveSubmission()", "+rejectSubmission()", "+calculateProgress()"] },
-    { n: "EventService", s: "control", x: 430, y: 1005, a: [], o: ["+createEvent()", "+vote()", "+decideEvent()"] },
+    { n: "TaskService", s: "control", x: 430, y: 770, a: [], o: ["+canReupload()", "+uploadSubmission()", "+approveSubmission()", "+rejectSubmission()", "+calculateProgress()"] },
+    { n: "EventService", s: "control", x: 430, y: 1005, a: [], o: ["+createEvent()", "+isVoteOpen()", "+vote()", "+decideEvent()"] },
     { n: "WorkspaceService", s: "control", x: 430, y: 1215, a: [], o: ["+createWorkspace()", "+sendMessage()"] },
 
     { n: "SupabaseAuthClient", s: "control", x: 805, y: 115, a: ["-supabaseUrl", "-anonKey"], o: ["+signUp()", "+signIn()", "+handleAuthResponse()"] },
@@ -80,7 +80,7 @@ function renderClassDiagram() {
     { n: "DataStore", s: "storage", x: 805, y: 765, a: [], o: ["+save()", "+findById()", "+findAll()", "+update()"] },
     { n: "FileStorage", s: "storage", x: 805, y: 1010, a: [], o: ["+upload()"] },
 
-    { n: "Member", s: "entity", x: 1205, y: 95, a: ["+memberId", "+supabaseUserId", "+studentNo", "+name", "+email", "+role"], o: ["+joinTeam()", "+voteEvent()"] },
+    { n: "Member", s: "entity", x: 1205, y: 95, a: ["+memberId", "+supabaseUserId", "+nickname", "+email", "+role"], o: ["+joinTeam()", "+voteEvent()"] },
     { n: "Team", s: "entity", x: 1205, y: 335, a: ["+teamId", "+teamName", "+description", "+adminId", "+createdAt"], o: ["+addMember()", "+createTask()", "+createEvent()"] },
     { n: "ScheduleBlock", s: "entity", x: 1205, y: 585, a: ["+scheduleId", "+teamId", "+memberId", "+day", "+startTime", "+endTime"], o: ["+overlaps()"] },
     { n: "Task", s: "entity", x: 1205, y: 815, a: ["+taskId", "+teamId", "+title", "+assigneeId", "+dueDate", "+status"], o: ["+submit()", "+approve()", "+reject()"] },
@@ -88,7 +88,7 @@ function renderClassDiagram() {
     { n: "TeamWorkspace", s: "entity", x: 1205, y: 1275, a: ["+workspaceId", "+eventId", "+workspaceName", "+createdAt"], o: ["+addParticipant()", "+postMessage()"] },
 
     { n: "TeamMember", s: "entity", x: 1585, y: 335, a: ["+teamMemberId", "+teamId", "+memberId", "+joinedAt"], o: ["+assignRole()"] },
-    { n: "Submission", s: "entity", x: 1585, y: 815, a: ["+submissionId", "+taskId", "+memberId", "+fileUrl", "+status", "+submittedAt"], o: ["+markApproved()", "+markRejected()"] },
+    { n: "Submission", s: "entity", x: 1585, y: 815, a: ["+submissionId", "+taskId", "+memberId", "+submittedBy", "+fileUrl", "+status", "+submittedAt"], o: ["+markApproved()", "+markRejected()"] },
     { n: "Vote", s: "entity", x: 1585, y: 1060, a: ["+voteId", "+eventId", "+memberId", "+status", "+votedAt"], o: ["+submit()"] },
   ];
   const nodes = new Map();
@@ -179,7 +179,7 @@ ${markerDefs()}
 function renderClassDiagramExpanded() {
   const boxW = 310;
   const classes = [
-    { n: "Member", s: "entity", x: 60, y: 100, a: ["+memberId", "+supabaseUserId", "+studentNo", "+name", "+email", "+role"], o: ["+register()", "+login()", "+joinTeam()", "+voteEvent()"] },
+    { n: "Member", s: "entity", x: 60, y: 100, a: ["+memberId", "+supabaseUserId", "+nickname", "+email", "+role"], o: ["+register()", "+login()", "+joinTeam()", "+voteEvent()"] },
     { n: "Administrator", s: "entity", x: 60, y: 420, a: ["+adminLevel"], o: ["+createTeam()", "+inviteMember()", "+confirmSchedule()", "+approveSubmission()"] },
     { n: "AuthAccount", s: "entity", x: 60, y: 690, a: ["+authUserId", "+email", "+passwordHash", "+lastLoginAt", "+verified"], o: ["+authenticate()", "+refreshSession()"] },
     { n: "Notification", s: "entity", x: 60, y: 950, a: ["+notificationId", "+receiverId", "+type", "+content", "+isRead", "+createdAt"], o: ["+send()", "+markRead()"] },
@@ -187,10 +187,10 @@ function renderClassDiagramExpanded() {
     { n: "Team", s: "aggregate root", x: 450, y: 100, a: ["+teamId", "+teamName", "+description", "+adminId", "+createdAt", "+status"], o: ["+addMember()", "+removeMember()", "+createTask()", "+openEvent()"] },
     { n: "TeamMember", s: "association", x: 450, y: 420, a: ["+teamMemberId", "+teamId", "+memberId", "+joinedAt", "+memberRole"], o: ["+assignRole()", "+leaveTeam()"] },
     { n: "ScheduleBlock", s: "entity", x: 450, y: 690, a: ["+scheduleId", "+teamId", "+memberId", "+dayOfWeek", "+startTime", "+endTime", "+blockType"], o: ["+overlaps()", "+isAvailable()"] },
-    { n: "ScheduleRecommendation", s: "value object", x: 450, y: 950, a: ["+recommendationId", "+teamId", "+startTime", "+endTime", "+score"], o: ["+calculateScore()", "+rank()"] },
+    { n: "ScheduleRecommendation", s: "value object", x: 450, y: 950, a: ["+recommendationId", "+teamId", "+startTime", "+endTime", "+available"], o: ["+filterUnavailable()", "+markAvailable()"] },
 
     { n: "Task", s: "entity", x: 840, y: 100, a: ["+taskId", "+teamId", "+title", "+description", "+assigneeId", "+dueDate", "+status"], o: ["+assignTo()", "+submit()", "+approve()", "+reject()"] },
-    { n: "Submission", s: "entity", x: 840, y: 420, a: ["+submissionId", "+taskId", "+memberId", "+fileUrl", "+status", "+submittedAt"], o: ["+markApproved()", "+markRejected()", "+requestResubmit()"] },
+    { n: "Submission", s: "entity", x: 840, y: 420, a: ["+submissionId", "+taskId", "+memberId", "+submittedBy", "+fileUrl", "+status", "+submittedAt"], o: ["+markApproved()", "+markRejected()", "+requestResubmit()"] },
     { n: "FileAttachment", s: "value object", x: 840, y: 690, a: ["+fileId", "+submissionId", "+fileName", "+fileUrl", "+uploadedAt"], o: ["+validateType()", "+download()"] },
     { n: "DataStore", s: "repository", x: 840, y: 950, a: ["-connection", "-tableName"], o: ["+save()", "+findById()", "+findAll()", "+update()"] },
 
@@ -302,26 +302,28 @@ ${markerDefs()}
 }
 
 const sequenceFiles = [
-  ["03_01_register_member_sequence.svg", "3.1 Register Member", [["actor", "member:Member"], ["participant", "LoginUI"], ["participant", "RegisterUI"], ["participant", "AuthService"], ["participant", "SupabaseAuthClient"], ["participant", "SupabaseAuthAPI"], ["participant", "DataStore"]], [
-    ["member:Member", "LoginUI", "회원가입 선택"], ["LoginUI", "LoginUI", "openRegisterUI()"], ["LoginUI", "RegisterUI", "display()"],
-    ["member:Member", "RegisterUI", "학번 또는 이메일, 비밀번호 입력"], ["RegisterUI", "RegisterUI", "submitRegister(data)"],
-    ["RegisterUI", "AuthService", "registerMember(data)"], ["AuthService", "AuthService", "validateInput(data)"],
-    ["AuthService", "SupabaseAuthClient", "signUp(email, password)"], ["SupabaseAuthClient", "SupabaseAuthAPI", "POST /auth/v1/signup"],
-    ["SupabaseAuthAPI", "SupabaseAuthClient", "user and session response", true], ["fragment", "alt 회원가입 성공"],
-    ["SupabaseAuthClient", "AuthService", "auth session", true], ["AuthService", "DataStore", "save(Member profile)"], ["DataStore", "AuthService", "profile save success", true],
-    ["AuthService", "RegisterUI", "registration success", true], ["RegisterUI", "member:Member", "showSuccess()", true],
+  ["03_01_register_member_sequence.svg", "3.1 Register Member", [["actor", "member:Member"], ["participant", "LoginUI"], ["participant", "RegisterUI"], ["participant", "AuthService"], ["participant", "SupabaseAuthClient"], ["participant", "SupabaseAuthAPI"], ["participant", "HomeUI"]], [
+    ["member:Member", "LoginUI", "회원가입 선택"], ["LoginUI", "RegisterUI", "showRegister()"],
+    ["member:Member", "RegisterUI", "닉네임, 이메일, 비밀번호, 권한 선택"], ["RegisterUI", "RegisterUI", "submitRegister(data)"],
+    ["RegisterUI", "AuthService", "registerMember(data)"], ["AuthService", "AuthService", "validateRequiredAndPasswordConfirm()"],
+    ["AuthService", "AuthService", "validateNicknameUnique(nickname)"], ["AuthService", "SupabaseAuthClient", "signUp(email, password, nickname, role)"],
+    ["SupabaseAuthClient", "SupabaseAuthAPI", "POST /auth/v1/signup"], ["SupabaseAuthAPI", "SupabaseAuthClient", "user and session response", true],
+    ["fragment", "alt 회원가입 성공"],
+    ["SupabaseAuthClient", "AuthService", "auth session with metadata", true], ["AuthService", "RegisterUI", "registration success", true],
+    ["RegisterUI", "HomeUI", "showHome()"], ["HomeUI", "member:Member", "홈 화면 표시", true],
     ["fragment", "else 입력 오류 또는 이미 가입된 계정"], ["SupabaseAuthAPI", "SupabaseAuthClient", "auth error", true],
     ["SupabaseAuthClient", "AuthService", "error message", true], ["AuthService", "RegisterUI", "registration error", true],
     ["RegisterUI", "member:Member", "showError(message)", true], ["fragment", "end"],
   ]],
   ["03_02_login_sequence.svg", "3.2 Login", [["actor", "member:Member"], ["participant", "LoginUI"], ["participant", "AuthService"], ["participant", "SupabaseAuthClient"], ["participant", "SupabaseAuthAPI"], ["participant", "HomeUI"]], [
-    ["member:Member", "LoginUI", "학번과 비밀번호 입력"], ["LoginUI", "LoginUI", "requestLogin(studentNo, password)"],
-    ["LoginUI", "AuthService", "login(studentNo, password)"], ["AuthService", "AuthService", "convertStudentNoToEmail(studentNo)"],
+    ["member:Member", "LoginUI", "이메일과 비밀번호 입력"], ["LoginUI", "LoginUI", "requestLogin(email, password)"],
+    ["LoginUI", "AuthService", "login(email, password)"], ["AuthService", "AuthService", "validateEmailFormat(email)"],
     ["AuthService", "SupabaseAuthClient", "signIn(email, password)"], ["SupabaseAuthClient", "SupabaseAuthAPI", "POST /auth/v1/token"],
     ["SupabaseAuthAPI", "SupabaseAuthClient", "auth response", true], ["fragment", "alt 로그인 성공"],
     ["SupabaseAuthClient", "AuthService", "auth session", true], ["AuthService", "LoginUI", "auth success", true],
     ["LoginUI", "LoginUI", "navigateHome()"], ["LoginUI", "HomeUI", "showHome()"], ["HomeUI", "member:Member", "홈 화면 표시", true],
-    ["fragment", "else 로그인 실패"], ["SupabaseAuthClient", "AuthService", "error message", true], ["AuthService", "LoginUI", "auth failure", true],
+    ["fragment", "else 로그인 실패"], ["SupabaseAuthClient", "AuthService", "Invalid login credentials", true],
+    ["AuthService", "AuthService", "mapToKoreanNotMemberMessage()"], ["AuthService", "LoginUI", "회원이 아닙니다. 회원가입을 진행해주세요.", true],
     ["LoginUI", "member:Member", "showError(message)", true], ["fragment", "end"],
   ]],
   ["03_03_create_team_sequence.svg", "3.3 Create Team", [["actor", "admin:Administrator"], ["participant", "HomeUI"], ["participant", "TeamUI"], ["participant", "TeamService"], ["participant", "DataStore"]], [
@@ -332,12 +334,11 @@ const sequenceFiles = [
     ["TeamUI", "HomeUI", "updateTeamList(team)", true], ["HomeUI", "admin:Administrator", "새 팀 카드 표시", true],
   ]],
   ["03_04_invite_member_sequence.svg", "3.4 Invite Member", [["actor", "admin:Administrator"], ["participant", "TeamUI"], ["participant", "TeamService"], ["participant", "DataStore"], ["participant", "NotificationService"], ["actor", "invitee:Member"]], [
-    ["admin:Administrator", "TeamUI", "초대할 멤버 선택"], ["TeamUI", "TeamUI", "selectInviteMember(memberId)"],
-    ["TeamUI", "TeamService", "inviteMember(teamId, memberId)"], ["TeamService", "DataStore", "findById(memberId)"],
-    ["DataStore", "TeamService", "Member data", true], ["TeamService", "DataStore", "save(TeamMember)"],
-    ["DataStore", "TeamService", "invite saved", true], ["TeamService", "NotificationService", "sendInvite(memberId, teamId)"],
-    ["NotificationService", "invitee:Member", "팀 초대 알림", true], ["TeamService", "TeamUI", "invitation success", true],
-    ["TeamUI", "TeamUI", "showInviteResult()"],
+    ["admin:Administrator", "TeamUI", "초대할 닉네임 입력"], ["TeamUI", "TeamService", "inviteByNickname(teamId, nickname)"],
+    ["TeamService", "DataStore", "findMemberByNickname(nickname)"], ["DataStore", "TeamService", "member profile", true],
+    ["TeamService", "DataStore", "save(TeamMember)"], ["DataStore", "TeamService", "invite saved", true],
+    ["TeamService", "NotificationService", "sendInviteNotice(teamId, nickname)"], ["NotificationService", "invitee:Member", "팀 초대 알림", true],
+    ["TeamService", "TeamUI", "invite success", true], ["TeamUI", "admin:Administrator", "팀 멤버 수 갱신", true],
   ]],
   ["03_05_input_schedule_sequence.svg", "3.5 Input Schedule", [["actor", "member:Member"], ["participant", "ScheduleUI"], ["participant", "ScheduleService"], ["participant", "DataStore"]], [
     ["member:Member", "ScheduleUI", "불가능 시간 cell 터치"], ["ScheduleUI", "ScheduleUI", "selectUnavailableTime(block)"],
@@ -347,19 +348,25 @@ const sequenceFiles = [
   ]],
   ["03_06_decide_schedule_sequence.svg", "3.6 Decide Schedule", [["actor", "admin:Administrator"], ["participant", "ScheduleUI"], ["participant", "ScheduleService"], ["participant", "DataStore"], ["participant", "NotificationService"], ["actor", "member:Member"]], [
     ["admin:Administrator", "ScheduleUI", "최적 시간 추천받기 선택"], ["ScheduleUI", "ScheduleUI", "requestRecommendation(teamId)"],
-    ["ScheduleUI", "ScheduleService", "recommendTime(teamId)"], ["ScheduleService", "DataStore", "findAll(teamId)"],
-    ["DataStore", "ScheduleService", "all unavailable blocks", true], ["ScheduleService", "ScheduleService", "calculate available slots"],
-    ["ScheduleService", "ScheduleUI", "recommended slots", true], ["ScheduleUI", "admin:Administrator", "highlightRecommendedSlot(slot)", true],
-    ["admin:Administrator", "ScheduleUI", "추천 시간 확정"], ["ScheduleUI", "ScheduleService", "confirmSchedule(teamId, slot)"],
-    ["ScheduleService", "NotificationService", "sendScheduleNotice(teamId, slot)"], ["NotificationService", "member:Member", "일정 확정 알림", true],
+    ["ScheduleUI", "ScheduleService", "recommendAvailableTimes(teamId)"], ["ScheduleService", "DataStore", "findAll(teamId)"],
+    ["DataStore", "ScheduleService", "all unavailable blocks", true], ["ScheduleService", "ScheduleService", "filterFullyAvailableSlots(09-23)"],
+    ["ScheduleService", "ScheduleUI", "all available slots", true], ["ScheduleUI", "ScheduleUI", "highlightAvailableCells()"],
+    ["admin:Administrator", "ScheduleUI", "년월일시분 스크롤 입력"], ["ScheduleUI", "ScheduleService", "confirmSchedule(teamId, selectedDateTime)"],
+    ["ScheduleService", "DataStore", "saveConfirmedSchedule()"], ["ScheduleService", "ScheduleUI", "showTeamMeetingMessage()", true],
   ]],
   ["03_07_upload_task_sequence.svg", "3.7 Upload Task", [["actor", "member:Member"], ["participant", "TaskBoardUI"], ["participant", "TaskService"], ["participant", "FileStorage"], ["participant", "DataStore"], ["participant", "NotificationService"], ["actor", "admin:Administrator"]], [
-    ["member:Member", "TaskBoardUI", "제출물 업로드 선택"], ["TaskBoardUI", "TaskBoardUI", "requestUpload(taskId, file)"],
-    ["TaskBoardUI", "TaskService", "uploadSubmission(taskId, memberId, file)"], ["TaskService", "FileStorage", "upload(file)"],
-    ["FileStorage", "TaskService", "fileUrl", true], ["TaskService", "DataStore", "save(Submission)"],
+    ["member:Member", "TaskBoardUI", "제출물 업로드 선택"], ["TaskBoardUI", "TaskService", "canReupload(taskId, memberId)"],
+    ["TaskService", "DataStore", "findSubmission(taskId)"], ["DataStore", "TaskService", "submission or empty", true],
+    ["fragment", "alt 제출물 없음 또는 같은 제출자"],
+    ["TaskService", "TaskBoardUI", "upload allowed", true], ["TaskBoardUI", "TaskBoardUI", "openAndroidFilePicker()"],
+    ["member:Member", "TaskBoardUI", "사진 또는 파일 선택"], ["TaskBoardUI", "TaskService", "uploadSubmission(taskId, memberId, uri)"],
+    ["TaskService", "FileStorage", "uploadToSupabaseStorage(file)"], ["FileStorage", "TaskService", "objectPath", true],
+    ["TaskService", "DataStore", "save(Submission with submittedBy)"],
     ["DataStore", "TaskService", "save success", true], ["TaskService", "NotificationService", "sendSubmissionNotice(taskId)"],
     ["NotificationService", "admin:Administrator", "제출 알림", true], ["TaskService", "TaskBoardUI", "upload success", true],
     ["TaskBoardUI", "member:Member", "제출 상태 표시", true],
+    ["fragment", "else 다른 제출자 존재"], ["TaskService", "TaskBoardUI", "reupload blocked", true],
+    ["TaskBoardUI", "member:Member", "재업로드 제한 표시", true], ["fragment", "end"],
   ]],
   ["03_08_approve_task_sequence.svg", "3.8 Approve Task", [["actor", "admin:Administrator"], ["participant", "TaskBoardUI"], ["participant", "TaskService"], ["participant", "DataStore"], ["participant", "NotificationService"], ["actor", "member:Member"]], [
     ["admin:Administrator", "TaskBoardUI", "제출물 확인"], ["TaskBoardUI", "TaskService", "getSubmission(submissionId)"],
@@ -374,17 +381,23 @@ const sequenceFiles = [
     ["NotificationService", "member:Member", "재제출 요청 알림", true], ["fragment", "end"],
   ]],
   ["03_09_manage_event_notification_sequence.svg", "3.9 Manage Event & Notification", [["actor", "admin:Administrator"], ["participant", "EventUI"], ["participant", "EventService"], ["participant", "DataStore"], ["participant", "NotificationService"], ["actor", "member:Member"]], [
-    ["admin:Administrator", "EventUI", "이벤트 생성 정보 입력"], ["EventUI", "EventUI", "submitEventData(eventData)"],
+    ["admin:Administrator", "EventUI", "이벤트 생성 정보 입력"], ["EventUI", "EventUI", "selectVoteDeadline()"],
+    ["EventUI", "EventUI", "submitEventData(eventData, deadline)"],
     ["EventUI", "EventService", "createEvent(teamId, eventData)"], ["EventService", "DataStore", "save(Event)"],
     ["DataStore", "EventService", "event saved", true], ["EventService", "NotificationService", "sendVoteRequest(eventId)"],
     ["NotificationService", "member:Member", "이벤트 투표 요청 알림", true], ["EventService", "EventUI", "event open", true],
     ["EventUI", "admin:Administrator", "이벤트 카드 표시", true],
   ]],
   ["03_10_vote_event_sequence.svg", "3.10 Vote Event", [["actor", "member:Member"], ["participant", "EventUI"], ["participant", "EventService"], ["participant", "DataStore"]], [
+    ["member:Member", "EventUI", "남은 시간 확인"], ["EventUI", "EventService", "isVoteOpen(eventId)"],
+    ["EventService", "DataStore", "findEvent(eventId)"], ["DataStore", "EventService", "deadline", true],
+    ["fragment", "alt 마감 전"],
     ["member:Member", "EventUI", "참여/불참 선택"], ["EventUI", "EventUI", "submitVote(voteStatus)"],
     ["EventUI", "EventService", "vote(eventId, memberId, voteStatus)"], ["EventService", "DataStore", "save(Vote)"],
     ["DataStore", "EventService", "vote saved", true], ["EventService", "EventUI", "vote success", true],
     ["EventUI", "member:Member", "투표 완료 상태 표시", true],
+    ["fragment", "else 마감 후"], ["EventService", "EventUI", "vote closed", true],
+    ["EventUI", "member:Member", "마감 안내 표시", true], ["fragment", "end"],
   ]],
   ["03_11_alert_vote_sequence.svg", "3.11 Alert Vote", [["participant", "EventService"], ["participant", "DataStore"], ["participant", "NotificationService"], ["actor", "member:Member"]], [
     ["EventService", "DataStore", "findAll(eventId)"], ["DataStore", "EventService", "vote list", true],
@@ -596,12 +609,12 @@ ${markerDefs()}
 
   edge("Initial", "LaunchSystem", "", { from: "right", to: "left" });
   edge("LaunchSystem", "WaitLoginInput", "show login", { from: "bottom", to: "top", vertical: true, midY: 230, labelX: 270, labelY: 232 });
-  edge("LaunchSystem", "RegisterMember", "select sign up", { from: "left", to: "left", d: "M125 160 H112 V435 H125", labelX: 166, labelY: 348 });
+  edge("WaitLoginInput", "RegisterMember", "select sign up", { from: "bottom", to: "top", vertical: true, midY: 365, labelX: 126, labelY: 365 });
   edge("WaitLoginInput", "WaitLoginValidation", "submit login", { from: "right", to: "left", labelY: 275 });
-  edge("WaitLoginValidation", "WaitLoginInput", "[failure]", { from: "bottom", to: "bottom", d: "M465 326 V365 H210 V326", labelX: 355, labelY: 382 });
+  edge("WaitLoginValidation", "WaitLoginInput", "[not member]", { from: "bottom", to: "bottom", d: "M465 326 V365 H210 V326", labelX: 355, labelY: 382 });
   edge("WaitLoginValidation", "Home", "[success]", { from: "right", to: "left", d: "M550 300 H620 V250 H995", labelX: 780, labelY: 238 });
   edge("RegisterMember", "WaitRegisterValidation", "submit data", { from: "right", to: "left", labelY: 410 });
-  edge("WaitRegisterValidation", "RegisterMember", "[invalid]", { from: "top", to: "right", d: "M465 409 V380 H300 V435 H295", labelX: 390, labelY: 372 });
+  edge("WaitRegisterValidation", "RegisterMember", "[invalid or duplicate]", { from: "top", to: "right", d: "M465 409 V380 H300 V435 H295", labelX: 390, labelY: 372 });
   edge("WaitRegisterValidation", "RegisterInformation", "[valid]", { from: "top", to: "bottom", d: "M465 409 V372 H725 V326", labelX: 595, labelY: 362 });
   edge("RegisterInformation", "Home", "session created", { from: "right", to: "left", d: "M810 300 H925 V180 H995", labelX: 900, labelY: 160 });
   edge("Home", "Final", "logout / exit", { from: "right", to: "left", labelX: 1610, labelY: 160 });
@@ -620,7 +633,7 @@ ${markerDefs()}
   edge("ScheduleRecommending", "ScheduleConfirmed", "confirm", { from: "bottom", to: "top", vertical: true, midY: 845, labelX: 650, labelY: 845 });
   edge("ScheduleConfirmed", "Home", "return", { from: "right", to: "bottom", d: "M835 900 H970 V206 H1080", labelX: 988, labelY: 610 });
 
-  edge("TaskViewing", "TaskUploading", "upload", { from: "bottom", to: "top", d: "M1280 696 V745 H1160 V784", labelX: 1200, labelY: 738 });
+  edge("TaskViewing", "TaskUploading", "upload allowed", { from: "bottom", to: "top", d: "M1280 696 V745 H1160 V784", labelX: 1200, labelY: 738 });
   edge("TaskUploading", "TaskSubmitted", "submitted", { from: "right", to: "left", labelY: 780 });
   edge("TaskSubmitted", "TaskDecision", "review", { from: "bottom", to: "top", d: "M1390 836 V865 H1280 V883", labelX: 1405, labelY: 864 });
   edge("TaskDecision", "TaskApproved", "[approved]", { from: "left", to: "top", d: "M1263 900 H1160 V944", labelX: 1198, labelY: 890 });
@@ -631,7 +644,7 @@ ${markerDefs()}
   edge("EventVoting", "VoteSubmitted", "attend / absent", { from: "right", to: "left", labelY: 1202 });
   edge("EventVoting", "VoteReminderWaiting", "not responded", { from: "bottom", to: "top", vertical: true, midY: 1320, labelX: 112, labelY: 1320 });
   edge("VoteReminderWaiting", "EventVoting", "reminder", { from: "right", to: "right", d: "M295 1410 H360 V1230 H295", labelX: 385, labelY: 1325 });
-  edge("VoteSubmitted", "EventDeciding", "deadline", { from: "right", to: "left", labelY: 1202 });
+  edge("VoteSubmitted", "EventDeciding", "vote deadline", { from: "right", to: "left", labelY: 1202 });
   edge("EventDeciding", "EventDecision", "count votes", { from: "right", to: "left", labelY: 1202 });
   edge("EventDecision", "EventCanceled", "[no attendee]", { from: "bottom", to: "top", vertical: true, midY: 1320, labelX: 930, labelY: 1320 });
   edge("EventDecision", "WorkspaceCreated", "[attendee exists]", { from: "right", to: "left", labelY: 1202 });
@@ -749,12 +762,12 @@ ${markerDefs()}
 
   edge("Initial", "LaunchSystem", "", { from: "right", to: "left" });
   edge("LaunchSystem", "WaitLoginInput", "show login", { from: "bottom", to: "top", vertical: true, midY: 230, labelX: 270, labelY: 232 });
-  edge("LaunchSystem", "RegisterMember", "select sign up", { from: "left", to: "left", d: "M125 160 H112 V435 H125", labelX: 166, labelY: 348 });
+  edge("WaitLoginInput", "RegisterMember", "select sign up", { from: "bottom", to: "top", vertical: true, midY: 365, labelX: 126, labelY: 365 });
   edge("WaitLoginInput", "WaitLoginValidation", "submit login", { from: "right", to: "left", labelY: 275 });
-  edge("WaitLoginValidation", "WaitLoginInput", "[failure]", { from: "bottom", to: "bottom", d: "M465 326 V365 H210 V326", labelX: 355, labelY: 392 });
+  edge("WaitLoginValidation", "WaitLoginInput", "[not member]", { from: "bottom", to: "bottom", d: "M465 326 V365 H210 V326", labelX: 355, labelY: 392 });
   edge("WaitLoginValidation", "Home", "[success]", { from: "right", to: "left", d: "M550 300 H610 V250 H1130", labelX: 815, labelY: 238 });
   edge("RegisterMember", "WaitRegisterValidation", "submit data", { from: "right", to: "left", labelY: 410 });
-  edge("WaitRegisterValidation", "RegisterMember", "[invalid]", { from: "top", to: "right", d: "M465 409 V380 H300 V435 H295", labelX: 430, labelY: 360 });
+  edge("WaitRegisterValidation", "RegisterMember", "[invalid or duplicate]", { from: "top", to: "right", d: "M465 409 V380 H300 V435 H295", labelX: 430, labelY: 360 });
   edge("WaitRegisterValidation", "RegisterInformation", "[valid]", { from: "top", to: "bottom", d: "M465 409 V372 H735 V326", labelX: 605, labelY: 362 });
   edge("RegisterInformation", "Home", "session created", { from: "right", to: "left", d: "M820 300 H1035 V190 H1130", labelX: 1000, labelY: 175 });
   edge("Home", "Final", "logout / exit", { from: "right", to: "left", labelX: 1340, labelY: 170 });
@@ -771,7 +784,7 @@ ${markerDefs()}
   edge("ScheduleConfirmed", "ScheduleEnd", "return home", { from: "right", to: "left", labelY: 790 });
 
   edge("TaskStart", "TaskViewing", "task tab", { from: "right", to: "left", labelY: 602 });
-  edge("TaskViewing", "TaskUploading", "upload", { from: "bottom", to: "top", d: "M1265 651 V700 H1135 V739", labelX: 1180, labelY: 695 });
+  edge("TaskViewing", "TaskUploading", "upload allowed", { from: "bottom", to: "top", d: "M1265 651 V700 H1135 V739", labelX: 1180, labelY: 695 });
   edge("TaskUploading", "TaskSubmitted", "submitted", { from: "right", to: "left", labelY: 740 });
   edge("TaskSubmitted", "TaskDecision", "review", { from: "bottom", to: "right", d: "M1400 791 V805 H1282 V835", labelX: 1325, labelY: 800 });
   edge("TaskDecision", "TaskApproved", "[approved]", { from: "left", to: "top", d: "M1248 835 H1135 V859", labelX: 1195, labelY: 820 });
@@ -784,7 +797,7 @@ ${markerDefs()}
   edge("EventVoting", "VoteSubmitted", "attend / absent", { from: "right", to: "left", labelY: 1076 });
   edge("EventVoting", "VoteReminderWaiting", "not responded", { from: "bottom", to: "top", vertical: true, midY: 1180, labelX: 112, labelY: 1185 });
   edge("VoteReminderWaiting", "EventVoting", "reminder", { from: "right", to: "right", d: "M295 1255 H355 V1100 H295", labelX: 382, labelY: 1188 });
-  edge("VoteSubmitted", "EventDeciding", "deadline", { from: "right", to: "left", labelY: 1076 });
+  edge("VoteSubmitted", "EventDeciding", "vote deadline", { from: "right", to: "left", labelY: 1076 });
   edge("EventDeciding", "EventDecision", "count votes", { from: "right", to: "left", labelY: 1076 });
   edge("EventDecision", "EventCanceled", "[no attendee]", { from: "bottom", to: "top", vertical: true, midY: 1180, labelX: 900, labelY: 1185 });
   edge("EventDecision", "WorkspaceCreated", "[attendee exists]", { from: "right", to: "left", labelY: 1076 });

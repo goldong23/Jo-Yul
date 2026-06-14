@@ -29,6 +29,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "SUPABASE_URL", quoted(localProps.getProperty("SUPABASE_URL", "https://cnfunhbqzsmqhmgtdyky.supabase.co"))
-        buildConfigField "String", "SUPABASE_ANON_KEY", quoted(localProps.getProperty("SUPABASE_ANON_KEY", ""))
+        buildConfigField "String", "SUPABASE_ANON_KEY", quoted(localProps.getProperty("SUPABASE_ANON_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNuZnVuaGJxenNtcWhtZ3RkeWt5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NjQ3ODQsImV4cCI6MjA5NjA0MDc4NH0.vGAJdfDZMe3-6Bv4AUBdHDM9Gdc7lgk-lM06_GLJzJ0"))
+        buildConfigField "String", "DELETE_ACCOUNT_FUNCTION_URL", quoted(localProps.getProperty("DELETE_ACCOUNT_FUNCTION_URL", ""))
     }
 }
