@@ -1,31 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="675" viewBox="0 0 900 675">
-<style>text{font-family:Arial,'Malgun Gothic',sans-serif}.title{font-size:22px;font-weight:700;fill:#1f2937}.boxTitle{font-size:14px;font-weight:700;fill:#111827}.small{font-size:12px;fill:#374151}.msg{font-size:12px;fill:#111827}.muted{font-size:11px;fill:#6b7280}</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="647" viewBox="0 0 1060 647">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#111827"/></marker>
+  <marker id="hollowArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#fbfbfb" stroke="#111827"/></marker>
+  <marker id="diamond" viewBox="0 0 16 10" refX="1" refY="5" markerWidth="11" markerHeight="9" orient="auto"><path d="M1 5 L8 1 L15 5 L8 9 z" fill="#111827" stroke="#111827"/></marker>
+</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
-<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
-<text x="40" y="44" class="title">Sequence Diagram 14</text>
-<rect x="5" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
-<text x="70" y="82" text-anchor="middle" class="boxTitle">Participant</text>
-<line x1="70" y1="96" x2="70" y2="640" stroke="#cbd5e1" stroke-dasharray="5,5"/>
-<rect x="195" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
-<text x="260" y="82" text-anchor="middle" class="boxTitle">MainActivity</text>
-<line x1="260" y1="96" x2="260" y2="640" stroke="#cbd5e1" stroke-dasharray="5,5"/>
-<rect x="385" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
-<text x="450" y="82" text-anchor="middle" class="boxTitle">workspaceMessagesByEvent</text>
-<line x1="450" y1="96" x2="450" y2="640" stroke="#cbd5e1" stroke-dasharray="5,5"/>
-<line x1="70" y1="145" x2="260" y2="145" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="165.0" y="137" text-anchor="middle" class="msg">워크스페이스 메시지 입력 후 전송</text>
-<path d="M260 200 C330 200 330 230 260 230" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="338" y="205" text-anchor="middle" class="msg">빈 메시지 여부 확인</text>
-<rect x="35" y="233" width="830" height="32" rx="6" fill="#fef3c7" stroke="#f59e0b" opacity="0.9"/>
-<text x="50" y="255" class="small">alt: 내용 있음</text>
-<line x1="260" y1="310" x2="450" y2="310" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="355.0" y="302" text-anchor="middle" class="msg">eventId 메시지 목록 조회</text>
-<line x1="260" y1="365" x2="450" y2="365" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="355.0" y="357" text-anchor="middle" class="msg">MessageItem(currentUserName, body) 추가</text>
-<line x1="260" y1="420" x2="70" y2="420" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="165.0" y="412" text-anchor="middle" class="msg">같은 이벤트 워크스페이스 메시지 갱신</text>
-<rect x="35" y="453" width="830" height="32" rx="6" fill="#fef3c7" stroke="#f59e0b" opacity="0.9"/>
-<text x="50" y="475" class="small">else: 내용 없음</text>
-<line x1="260" y1="530" x2="70" y2="530" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
-<text x="165.0" y="522" text-anchor="middle" class="msg">저장하지 않음</text>
-</svg>
+<text x="36" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="700">3.14 Manage Team Workspace</text><rect x="26" y="62" width="168" height="44" fill="#fbfbfb" stroke="#111827" stroke-width="1.2"/>
+<text x="110" y="89" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700">WorkspaceUI</text><line x1="110" y1="106" x2="110" y2="607" stroke="#111827" stroke-width="1" stroke-dasharray="6 6"/><rect x="256" y="62" width="168" height="44" fill="#fbfbfb" stroke="#111827" stroke-width="1.2"/>
+<text x="340" y="89" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700">WorkspaceService</text><line x1="340" y1="106" x2="340" y2="607" stroke="#111827" stroke-width="1" stroke-dasharray="6 6"/><rect x="486" y="62" width="168" height="44" fill="#fbfbfb" stroke="#111827" stroke-width="1.2"/>
+<text x="570" y="89" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700">DataStore</text><line x1="570" y1="106" x2="570" y2="607" stroke="#111827" stroke-width="1" stroke-dasharray="6 6"/><rect x="716" y="62" width="168" height="44" fill="#fbfbfb" stroke="#111827" stroke-width="1.2"/>
+<text x="800" y="89" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700">NotificationService</text><line x1="800" y1="106" x2="800" y2="607" stroke="#111827" stroke-width="1" stroke-dasharray="6 6"/><path d="M110 162 h42 q18 0 18 18 q0 18 -18 18 h-42" fill="none" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/><text x="164" y="144" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#111827">submitMessage(message)</text><line x1="110" y1="234" x2="340" y2="234" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/><text x="225" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#111827">sendMessage(workspaceId,</text><text x="225" y="231" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#111827">memberId, message)</text><line x1="340" y1="320" x2="570" y2="320" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/><text x="455" y="302" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#111827">save(message)</text><line x1="570" y1="392" x2="340" y2="392" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)" stroke-dasharray="5 4"/><text x="455" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#111827">save success</text><line x1="340" y1="464" x2="800" y2="464" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)"/><text x="570" y="446" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#111827">sendWorkspaceNotice(workspaceId)</text><line x1="340" y1="536" x2="110" y2="536" stroke="#111827" stroke-width="1.05" marker-end="url(#arrow)" stroke-dasharray="5 4"/><text x="225" y="518" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#111827">message sent</text></svg>
