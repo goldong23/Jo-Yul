@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="620" viewBox="0 0 1140 620">
+<style>text{font-family:Arial,'Malgun Gothic',sans-serif}.title{font-size:22px;font-weight:700;fill:#1f2937}.boxTitle{font-size:14px;font-weight:700;fill:#111827}.small{font-size:12px;fill:#374151}.msg{font-size:12px;fill:#111827}.muted{font-size:11px;fill:#6b7280}</style>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+<text x="40" y="44" class="title">Sequence Diagram 7</text>
+<rect x="5" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="70" y="82" text-anchor="middle" class="boxTitle">Member</text>
+<line x1="70" y1="96" x2="70" y2="585" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<rect x="195" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="260" y="82" text-anchor="middle" class="boxTitle">MainActivity</text>
+<line x1="260" y1="96" x2="260" y2="585" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<rect x="385" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="450" y="82" text-anchor="middle" class="boxTitle">Android File Picker</text>
+<line x1="450" y1="96" x2="450" y2="585" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<rect x="575" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="640" y="82" text-anchor="middle" class="boxTitle">SupabaseAuthClient</text>
+<line x1="640" y1="96" x2="640" y2="585" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<rect x="765" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="830" y="82" text-anchor="middle" class="boxTitle">Supabase Storage</text>
+<line x1="830" y1="96" x2="830" y2="585" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<line x1="70" y1="145" x2="260" y2="145" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="165.0" y="137" text-anchor="middle" class="msg">산출물 업로드</text>
+<line x1="260" y1="200" x2="450" y2="200" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="355.0" y="192" text-anchor="middle" class="msg">ACTION_OPEN_DOCUMENT</text>
+<line x1="450" y1="255" x2="260" y2="255" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="355.0" y="247" text-anchor="middle" class="msg">Uri, displayName, MIME type</text>
+<line x1="260" y1="310" x2="640" y2="310" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="450.0" y="302" text-anchor="middle" class="msg">uploadSubmission(token, fileName, mime</text>
+<text x="450.0" y="317" text-anchor="middle" class="msg">Type, bytes)</text>
+<line x1="640" y1="377" x2="830" y2="377" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="735.0" y="369" text-anchor="middle" class="msg">submissions object 업로드</text>
+<line x1="830" y1="432" x2="640" y2="432" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="735.0" y="424" text-anchor="middle" class="msg">object path</text>
+<line x1="640" y1="487" x2="260" y2="487" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="450.0" y="479" text-anchor="middle" class="msg">onSuccess(storagePath)</text>
+<path d="M260 542 C330 542 330 572 260 572" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="338" y="547" text-anchor="middle" class="msg">file/fileUri/localUri/mimeType/submitt</text>
+<text x="338" y="562" text-anchor="middle" class="msg">edBy/status 갱신</text>
+</svg>
