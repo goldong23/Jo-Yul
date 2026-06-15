@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="565" viewBox="0 0 900 565">
+<style>text{font-family:Arial,'Malgun Gothic',sans-serif}.title{font-size:22px;font-weight:700;fill:#1f2937}.boxTitle{font-size:14px;font-weight:700;fill:#111827}.small{font-size:12px;fill:#374151}.msg{font-size:12px;fill:#111827}.muted{font-size:11px;fill:#6b7280}</style>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+<text x="40" y="44" class="title">Sequence Diagram 11</text>
+<rect x="5" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="70" y="82" text-anchor="middle" class="boxTitle">Member</text>
+<line x1="70" y1="96" x2="70" y2="530" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<rect x="195" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="260" y="82" text-anchor="middle" class="boxTitle">MainActivity</text>
+<line x1="260" y1="96" x2="260" y2="530" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<rect x="385" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="450" y="82" text-anchor="middle" class="boxTitle">EventItem</text>
+<line x1="450" y1="96" x2="450" y2="530" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<line x1="70" y1="145" x2="260" y2="145" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="165.0" y="137" text-anchor="middle" class="msg">Home 또는 이벤트 탭 진입</text>
+<line x1="260" y1="200" x2="450" y2="200" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="355.0" y="192" text-anchor="middle" class="msg">visibleEvents(), voteFor(currentUserNa</text>
+<text x="355.0" y="207" text-anchor="middle" class="msg">me)</text>
+<rect x="35" y="245" width="830" height="32" rx="6" fill="#fef3c7" stroke="#f59e0b" opacity="0.9"/>
+<text x="50" y="267" class="small">alt: 미투표 이벤트 있음</text>
+<line x1="260" y1="322" x2="70" y2="322" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="165.0" y="314" text-anchor="middle" class="msg">Home 이벤트 안내 카드와 이벤트 탭 투표 버튼 표시</text>
+<rect x="35" y="355" width="830" height="32" rx="6" fill="#fef3c7" stroke="#f59e0b" opacity="0.9"/>
+<text x="50" y="377" class="small">else: 투표 완료 또는 마감</text>
+<line x1="260" y1="432" x2="70" y2="432" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="165.0" y="424" text-anchor="middle" class="msg">내 투표 결과 또는 마감 안내 표시</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620">
+<style>text{font-family:Arial,'Malgun Gothic',sans-serif}.title{font-size:22px;font-weight:700;fill:#1f2937}.boxTitle{font-size:14px;font-weight:700;fill:#111827}.small{font-size:12px;fill:#374151}.msg{font-size:12px;fill:#111827}.muted{font-size:11px;fill:#6b7280}</style>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>
+<text x="40" y="44" class="title">Sequence Diagram 8</text>
+<rect x="5" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="70" y="82" text-anchor="middle" class="boxTitle">Admin</text>
+<line x1="70" y1="96" x2="70" y2="585" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<rect x="195" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="260" y="82" text-anchor="middle" class="boxTitle">MainActivity</text>
+<line x1="260" y1="96" x2="260" y2="585" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<rect x="385" y="58" width="130" height="38" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+<text x="450" y="82" text-anchor="middle" class="boxTitle">TaskItem</text>
+<line x1="450" y1="96" x2="450" y2="585" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+<line x1="70" y1="145" x2="260" y2="145" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="165.0" y="137" text-anchor="middle" class="msg">관리자 승인 선택</text>
+<rect x="35" y="178" width="830" height="32" rx="6" fill="#fef3c7" stroke="#f59e0b" opacity="0.9"/>
+<text x="50" y="200" class="small">alt: 제출 파일 있음</text>
+<line x1="260" y1="255" x2="450" y2="255" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="355.0" y="247" text-anchor="middle" class="msg">approved=true, status=&quot;승인 완료&quot;</text>
+<path d="M260 310 C330 310 330 340 260 340" fill="none" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="338" y="315" text-anchor="middle" class="msg">팀별 승인 비율 재계산</text>
+<line x1="260" y1="365" x2="70" y2="365" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="165.0" y="357" text-anchor="middle" class="msg">과제 진행률 갱신</text>
+<rect x="35" y="398" width="830" height="32" rx="6" fill="#fef3c7" stroke="#f59e0b" opacity="0.9"/>
+<text x="50" y="420" class="small">else: 제출 파일 없음</text>
+<line x1="260" y1="475" x2="70" y2="475" stroke="#2563eb" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="165.0" y="467" text-anchor="middle" class="msg">제출 파일 필요 안내</text>
+</svg>
